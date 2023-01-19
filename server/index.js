@@ -15,8 +15,10 @@ app.use(express.json());
 app.use(cors());
 
 let token = process.env.REACT_APP_MONGODB_TOKEN;
+//console.log(process.env.REACT_APP_MONGODB_TOKEN);
 
-mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/SiegerBreeding?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/StockTradingGame?retryWrites=true&w=majority");
+//mongodb+srv://robertrecalo:<password>@freecluster.ywz3xk7.mongodb.net/?retryWrites=true&w=majority
 
 //req = request
 //res = response

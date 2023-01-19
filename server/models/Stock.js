@@ -5,18 +5,18 @@ const StockSchema = new mongoose.Schema({
         required: true,
     },
     price : {
-        type: Double,
+        type: Number,
         required: true,
     },
     lastAvgPrice : {
-        type: Double,
+        type: Number,
         required: true,
     },
     trend : {
-        type: Int32,
+        type: Number,
         required: true,
     },
 });
 
-const StockModel = mongoose.model("stocks", UserSchema);
+const StockModel = mongoose.model("stocks", StockSchema);
 module.exports = StockModel;

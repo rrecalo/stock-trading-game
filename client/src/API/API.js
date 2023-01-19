@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-export const adminCredentials = {username: "admin", password: "1234"}
+//export const adminCredentials = {username: "admin", password: "1234"}
 
 export function getStocks(URL){
     return Axios.get(URL + "/getStocks").then((response) => {return(response)});
@@ -48,8 +48,10 @@ export function deleteInquiry(URL, values){
 //     });
 // }
 
+/**
 export function createUser(URL, values){
     return Axios.post(URL + "/createUser", {name: values.firstName, email : values.email}).then((response) =>{
         return(response.status);
     });
 }
+ */
