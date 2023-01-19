@@ -1,4 +1,5 @@
 //dependency//const declaration
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const mongoose = require('mongoose')
@@ -14,8 +15,7 @@ app.use(express.json());
 //use cors for connecting front and back end
 app.use(cors());
 
-let token = process.env.REACT_APP_MONGODB_TOKEN;
-//console.log(process.env.REACT_APP_MONGODB_TOKEN);
+let token = process.env.MONGODB_TOKEN;
 
 mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/StockTradingGame?retryWrites=true&w=majority");
 //mongodb+srv://robertrecalo:<password>@freecluster.ywz3xk7.mongodb.net/?retryWrites=true&w=majority
