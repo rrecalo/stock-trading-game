@@ -2,17 +2,25 @@ import './App.css';
 import React, {useState, useEffect} from 'react';
 import { getStocks, updateStock, userLogin } from './API/API';
 import Stock from './Stock';
+import PriceProvider from './PriceContext';
+import { usePrice } from './PriceContext';
+import BuyButton from './BuyButton';
+import SellButton from './SellButton';
 
 function App() {
 
   const [stocks, setStocks] = useState([]);
   const [userName, setUserName] = useState();
+  const [cash, setCash] = useState(10000);
+  const [assets, setAssets] = useState([]);
 
   //LIVE URL 
   let URL = "https://stock-trading-game-server.onrender.com";
   
   //*** FOR DEV ***
   //let URL ="http://localhost:3001";
+
+
 
   function setUser(userData){
     if(userData === null || userData ===  undefined){
@@ -24,15 +32,13 @@ function App() {
   }
 
   useEffect(()=>{
-    //if(result.data.userName !== undefined || result.data.userName !== null )
     userLogin(URL, "user1", "1372").then((result)=>{setUser(result.data)}, (result) => {console.log(result)});
     getStocks(URL).then((result)=>{setStocks(result.data)});
-    //updateStock(URL, "user1", "SPY", 419).then((result)=> console.log(result));
   }, [])
 
   useEffect(()=>{
-    //setTimeout(()=>{gameTick()}, 1000);
-
+    //setPrices(stocks.map((stock)=>[stock.ticker, stock.price]));
+    setAssets(stocks.map((stock)=>[stock.ticker, 0]));
 
   }, [stocks]);
 
@@ -42,106 +48,42 @@ function App() {
     }
   },[userName])
 
-  function gameTick(){
-    setStocks(stocks.map((stock) =>{
-      return stockMove(stock);
-    }));
-  }
-
-  function stockMove(stock){
-    /**
-    var oldprice = stock.price;
-    if(stock.trend <= -2){
-      stock.price = stock.price * (1- (Math.random() / 1000));
-      if(Math.random() > (1 / Math.abs(stock.trend))){
-        stock.trend += 1;
-      }
-      else stock.trend -= 1;
-    }
-    else if(stock.trend >= 2){
-      stock.price = stock.price * (1 + (Math.random() / 1000));
-      if(Math.random() > (1 / Math.abs(stock.trend))){
-        stock.trend -= 1;
-      }
-      else stock.trend +=1;
-    }
-    else {
-      stock.price = stock.price * (1 + (Math.random() / 2000));
-      if(Math.random() > 0.5){
-        stock.trend += 1;
-      }
-      else stock.trend -= 1;
-    }
-
-    if(oldprice < stock.price)
-      console.log(stock.price - oldprice);
-    else 
-      console.log(oldprice - stock.price);
-    */
-    var oldprice = stock.price;
-    if(stock.trend <= -2){
-      stock.price = stock.price * (1 - (0.01 * (Math.random() / (750 / Math.abs(stock.trend))) ));
-      if(Math.random() > (1 / Math.abs(stock.trend / 2))){
-        stock.trend +=1;
-      }
-      else if(Math.random() <= 0.05){
-        stock.trend+=10;
-      }
-      else{
-        stock.trend -=1;
-      }
-    }
-    else if(stock.trend >= 2){
-      stock.price = stock.price * (1 + (0.01 * (Math.random() / (750 / Math.abs(stock.trend))) ));
-      if(Math.random() > (1 / Math.abs(stock.trend / 2))){
-        stock.trend -=1;
-      }
-      else if(Math.random() <= 0.05){
-        stock.trend-=10;
-      }
-      else{
-        stock.trend +=1;
-      }
-    }
-    else {
-      if(Math.random() > 0.5){
-        stock.trend +=1;
-        stock.price = stock.price * (1 + (0.01 * (Math.random() / 750)));
-      }
-      else if(Math.random() >0.9){
-        stock.trend+=3;
-        stock.price = stock.price * (1 +(0.01 * (Math.random() / (750 / 3))));
-      }
-      else if(Math.random() <0.1){
-        stock.trend -=3;
-        stock.price = stock.price * (1 - (0.01 * (Math.random() / (750 / 3))));
-
-      }
-      else{
-        stock.trend -=1;
-        stock.price = stock.price * (1 - (0.01 * (Math.random() / 750)));
-
-      }
-    }
-    // if(oldprice < stock.price)
-    //   console.log(stock.price - oldprice);
-    // else 
-    //   console.log(oldprice - stock.price);
-    return stock;
-
-  }
 
   function renderTickers(){
     if(stocks !== [])
-    return stocks.map(stock => {return (<Stock key={stock.ticker} stockPrice={stock.price} stockTicker={stock.ticker} stockTrend={stock.trend}/>)})
+    return stocks.map(stock => {return (<Stock key={stock.ticker} 
+      stockPrice={stock.price} stockTicker={stock.ticker} 
+      stockTrend={stock.trend}/>)})
     else return <></>
   }
 
+  function buyStock(prices){
+    if(cash > prices[0][1]){
+      console.log("buy initiated!");
+      setAssets(oldAssets => [...oldAssets.filter(asset => asset[0] !== "SPY"), ["SPY", oldAssets.find(e => e[0] === "SPY")[1]+10]]);
+      console.log(assets);
+      setCash(oldCash => oldCash - (prices[0][1] * 10));
+    }
+  }
+
+  function sellStock(prices){
+    let index = assets.indexOf(assets.find(e => e[0] === "SPY"));
+    if(assets[index][1] > 0){
+      console.log("sell initiated!");
+      setAssets(oldAssets => [...oldAssets.filter(asset => asset[0] !== "SPY"), ["SPY", oldAssets.find(e => e[0] === "SPY")[1]-10]]);
+      console.log(assets);
+      setCash(oldCash => oldCash + (prices[0][1] * 10));
+    }
+  }
 
   return (
-    <div className="App">
-      <div className='flex flex-row gap-6 bg-gray-800 h-[50px] justify-center items-center h-screen'>
-        {renderTickers()}
+    <div className="App flex flex-col bg-gray-800 items-center">
+      <div className="mx-auto pt-[200px] pb-[25px] text-white text-2xl">Balance : {cash.toFixed(2)}</div>
+      <div className='flex flex-row gap-6 bg-gray-800 h-[50px] justify-center items-start h-screen'>
+        <PriceProvider values={[]} children={
+          (<><BuyButton buyStock={buyStock}/><SellButton sellStock={sellStock}/> {renderTickers()} </>) 
+          }>
+        </PriceProvider>
       </div>
     </div>
   );
