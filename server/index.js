@@ -4,18 +4,24 @@ const express = require("express");
 const app = express();
 const mongoose = require('mongoose')
 const StockModel = require('./models/Stock')
+const UserModel = require('./models/User');
+
 
 //connect Express' backend to React's frontend
 const cors = require('cors');
 const { ObjectId } = require("mongodb");
 var mongodb = require('mongodb');
+const { equal } = require('assert');
 
 //express can auto parse JSON body
 app.use(express.json());
 //use cors for connecting front and back end
 app.use(cors());
 
+let api_token = process.env.API_TOKEN;
+console.log(api_token);
 let token = process.env.MONGODB_TOKEN;
+console.log(token);
 
 mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/StockTradingGame?retryWrites=true&w=majority");
 //mongodb+srv://robertrecalo:<password>@freecluster.ywz3xk7.mongodb.net/?retryWrites=true&w=majority
@@ -35,6 +41,80 @@ app.get("/getStocks", (req, res)=>{
   });
 });
 
+app.get("/getStock", (req, res)=>{
+    
+    StockModel.findOne({ticker : req.query.ticker}, (err, result)=>{
+        if(err){
+            res.json(err);
+            console.log("Error finding Stock!");
+        }
+        else res.json(result);
+    })
+});
+
+app.get("/getUserAuthToken", (req, res)=>{
+    UserModel.findOne({userName : req.query.userName}, (err, result)=>{
+        if(err){
+            res.json(err);
+            console.log("Error finding User!");
+        }
+        else res.json(result);
+    })
+});
+
+app.get("/login", (req, res)=>{
+    UserModel.findOne({userName : req.query.userName, password : req.query.password}, (err, result)=>{
+        if(err){
+            res.json(err);
+            console.log("Error logging in!");
+        }
+        else res.json(result);
+})});
+
+app.post("/createUser", (req, res)=>{
+    
+    const user = req.body;
+
+    const newUser = new UserModel(user);
+
+    newUser.save();
+    res.json(user);
+
+});
+
+
+
+app.post("/updateStock", (req, res)=>{
+    if(req.header("token") !== api_token){
+        res.json("Unauthenticated Request! Error 401");
+        return;
+    }
+    StockModel.findOneAndUpdate({ticker : req.query.ticker}, {price : req.query.price}, (err, result)=>{
+        if(err){
+            res.json(err);
+            console.log("Error updating stock price for : " + req.query.price);
+        }
+        else res.json(result);
+
+    })});
+
+
+
+
+//setInterval(updateSPY(), 3000);
+
+/**
+app.get("/", (req, res)=>{
+    if(err){
+        res.json(err);
+        console.log("Error talking to server!");
+    }
+    else{
+        res.json(res);
+    }
+})
+
+/**
 app.post("/createUser", async (req, res) =>{
   const user = req.body;
   //make new user using the UserModel schema, passing the data given in the 'req' parameter
@@ -84,6 +164,7 @@ app.delete("/deleteInquiry", async (req, res)=>{
         }
       });
 });
+*/
 
 
 app.listen(3001, ()=>{

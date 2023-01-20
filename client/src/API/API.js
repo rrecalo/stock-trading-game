@@ -5,6 +5,22 @@ import Axios from "axios";
 export function getStocks(URL){
     return Axios.get(URL + "/getStocks").then((response) => {return(response)});
 }
+
+export function getAuth(URL, userName){
+    return Axios.get(URL + "/getUserAuthToken?userName=" + userName).then((response) =>{return(response)});
+}
+
+export function updateStock(URL, userName, ticker, newPrice){
+    return getAuth(URL, userName).then((auth)=>{
+        return Axios.post(URL + "/updateStock?ticker="+ticker+"&price="+newPrice, {}, {headers:{'token' : auth.data.authToken}}).then((response) => {return(response)});
+    });
+
+    //return Axios.post(URL + "/updateStock?ticker="+ticker+"&price="+newPrice).then((response) => {return(response)});
+}
+
+export function userLogin(URL, userName, password){
+    return Axios.get(URL + "/login?userName="+userName+"&password="+password).then((response) =>{return(response)});
+}
 /**
 export function createInquiry(URL, values){
     const dt = new Date();
