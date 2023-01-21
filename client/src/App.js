@@ -1,25 +1,30 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
-import { getStocks, updateStock, userLogin } from './API/API';
+import { getStocks, userLogin } from './API/API';
 import Stock from './Stock';
 import PriceProvider from './PriceContext';
-import { usePrice } from './PriceContext';
 import BuyButton from './BuyButton';
 import SellButton from './SellButton';
+import { useSelector, useDispatch} from 'react-redux'
+import { buy, sell } from './redux/positionsSlice'; 
+import { decrementCapital, incrementCapital} from './redux/capitalSlice'
 
 function App() {
 
+  const positions = useSelector((state) => state.positions);
+  const prices = useSelector((state) => state.prices);
+  const capital = useSelector((state) => state.capital);
+  const dispatch = useDispatch();
+
   const [stocks, setStocks] = useState([]);
   const [userName, setUserName] = useState();
-  const [cash, setCash] = useState(10000);
-  const [assets, setAssets] = useState([]);
+
 
   //LIVE URL 
   let URL = "https://stock-trading-game-server.onrender.com";
   
   //*** FOR DEV ***
   //let URL ="http://localhost:3001";
-
 
 
   function setUser(userData){
@@ -37,8 +42,6 @@ function App() {
   }, [])
 
   useEffect(()=>{
-    //setPrices(stocks.map((stock)=>[stock.ticker, stock.price]));
-    setAssets(stocks.map((stock)=>[stock.ticker, 0]));
 
   }, [stocks]);
 
@@ -57,28 +60,28 @@ function App() {
     else return <></>
   }
 
-  function buyStock(prices){
-    if(cash > prices[0][1]){
-      console.log("buy initiated!");
-      setAssets(oldAssets => [...oldAssets.filter(asset => asset[0] !== "SPY"), ["SPY", oldAssets.find(e => e[0] === "SPY")[1]+10]]);
-      console.log(assets);
-      setCash(oldCash => oldCash - (prices[0][1] * 10));
-    }
+  function buyStock(ticker){
+      let stockPrice = prices.find(obj => obj.ticker === ticker).price;
+      if(capital < stockPrice) return;
+      dispatch(buy({ticker : "SPY", amount: 10}));
+      dispatch(decrementCapital({amount: stockPrice * 10}));
+      //setCash(oldCash => oldCash - (stockPrice * 10));
+    //}
   }
 
-  function sellStock(prices){
-    let index = assets.indexOf(assets.find(e => e[0] === "SPY"));
-    if(assets[index][1] > 0){
-      console.log("sell initiated!");
-      setAssets(oldAssets => [...oldAssets.filter(asset => asset[0] !== "SPY"), ["SPY", oldAssets.find(e => e[0] === "SPY")[1]-10]]);
-      console.log(assets);
-      setCash(oldCash => oldCash + (prices[0][1] * 10));
-    }
+  function sellStock(ticker){
+      let stockPrice = prices.find(obj => obj.ticker === ticker).price;
+      if(positions.length === 0) return;
+      if(positions.find(obj => obj.ticker === ticker).amount <= 0) return;
+      dispatch(sell({ticker : "SPY", amount: 10}));
+      dispatch(incrementCapital({amount: stockPrice * 10}));
+      //setCash(oldCash => oldCash + (prices.find(obj => obj.ticker === "SPY").price * 10));
+    //}
   }
 
   return (
     <div className="App flex flex-col bg-gray-800 items-center">
-      <div className="mx-auto pt-[200px] pb-[25px] text-white text-2xl">Balance : {cash.toFixed(2)}</div>
+      <div className="mx-auto pt-[200px] pb-[25px] text-white text-2xl">Balance : {capital.toFixed(2)}</div>
       <div className='flex flex-row gap-6 bg-gray-800 h-[50px] justify-center items-start h-screen'>
         <PriceProvider values={[]} children={
           (<><BuyButton buyStock={buyStock}/><SellButton sellStock={sellStock}/> {renderTickers()} </>) 
