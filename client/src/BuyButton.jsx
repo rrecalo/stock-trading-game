@@ -7,7 +7,7 @@ const BuyButton = ({buyStock,...props}) => {
 
 
     function buy(){
-        buyStock(prices);
+        buyStock("SPY");
       }
 
   return (
