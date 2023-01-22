@@ -117,15 +117,15 @@ function App() {
   }
 
   return (
-    <div className="App flex flex-col bg-zinc-800 ">
+    <div className="App flex flex-col bg-zinc-800">
       <Navbar user={"User"}/>
-      <div className='flex flex-row gap-10 justify-center items-center h-[100px]'>
+        <div className='flex flex-row gap-10 justify-center items-center bg-zinc-800 '>
       <BuyButton buyStock={buyStock}/>
       <SellButton sellStock={sellStock}/> 
-      <button onClick={startSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Simulate Day</button>
-      <button onClick={loopSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Toggle Sim</button>
+      <button onClick={startSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Simulate 1 Day</button>
+      <button onClick={loopSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Toggle Loop</button>
       </div>
-      <div className='flex flex-row gap-2 bg-zinc-800 h-[50px] justify-center items-start h-screen'>
+      <div className='flex flex-row flex-wrap gap-2 bg-zinc-800 justify-center items-start h-fit'>
           {renderTickers()}
 
       </div>
