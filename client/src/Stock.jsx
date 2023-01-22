@@ -1,38 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { usePrice, usePriceUpdate} from './PriceContext'
 import { useSelector, useDispatch} from 'react-redux'
 import { update } from './redux/pricesSlice'
 
 
-const Stock = ({stockTicker, stockPrice, stockTrend,...props}) => {
-
+const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
+  
     const stockPrices = useSelector((state) => state.prices);  
+    const simulation = useSelector((state) => state.simulating.state);
+    const looping = useSelector((state) => state.simulating.isLooping);
     const dispatch = useDispatch();
-
-    const prices = usePrice();
-    const updatePrices = usePriceUpdate();
+    const [selected, setSelected] = useState(false);
 
     const [ticker, setTicker] = useState(stockTicker);
     const [open] = useState(stockPrice);
     const [trend, setTrend] = useState(stockTrend);
     const [price, setPrice] = useState(stockPrice);
     const [tick, setTick] = useState(0);
-    const [cycles, setCycles] = useState(0);
+    const [cycles, setCycles] = useState(1);
     const [movingAverage, setMovingAverage] = useState(stockPrice);
     const [lastMark, setLastMark] = useState(stockPrice);
     const [history, setHistory] = useState([]);
+    const [simulating, setSimulating] = useState(false);
 
     function stockMove(stock){
-        var TREND_STRENGTH_COEFFICIENT = 10; //higher = stronger/longer trends
-        var PERCENT_CHANGE_COEFFICIENT = 750; // higher == smaller moves
-        var TREND_PRICE_EFFECT_COEFFCIENT = 2.5; //higher == stronger price moves relative to trend value
-        //var oldprice = stock.price;
 
-        if(stock.price > lastMark && stock.price / lastMark >= 1.07){
+        //10, 750, 2.5
+        var TREND_STRENGTH_COEFFICIENT = 10; //higher = stronger/longer trends
+        var PERCENT_CHANGE_COEFFICIENT = 250; // higher == smaller moves
+        var TREND_PRICE_EFFECT_COEFFCIENT = 3; //higher == stronger price moves relative to trend value
+
+        if(stock.price > lastMark && stock.price / lastMark >= 1.03){
           pullBack(stock);
+          return;
         }
-        else if (stock.price < lastMark && stock.price / lastMark <= 0.93){
+        else if (stock.price < lastMark && stock.price / lastMark <= 0.97){
           recover(stock);
+          return;
         }
 
         if(stock.trend <= -2){
@@ -77,16 +80,14 @@ const Stock = ({stockTicker, stockPrice, stockTrend,...props}) => {
             stock.price = stock.price * (1 - (0.01 * (Math.random() / PERCENT_CHANGE_COEFFICIENT)));
           }
         }
-        //setStocks((stocks) => [...stocks.filter(s => s.ticker === stock.ticker), {stockTicker, newStockPrice, newStockTrend}])
         setPrice(stock.price);
         setTrend(stock.trend);
         setTick((tick) => tick+1);
-        //return stock;
     
       }
 
     function pullBack(stock){
-      console.log("pull back! : " + ticker + " from $" + stock.price + " to : $" + (stock.price*0.97).toFixed(2));
+      //console.log("pull back! : " + ticker + " from $" + stock.price + " to : $" + (stock.price*0.97).toFixed(2));
       setPrice(stock.price * 0.97);
       setTrend(0);
       setLastMark(stock.price * 0.97);
@@ -107,27 +108,45 @@ const Stock = ({stockTicker, stockPrice, stockTrend,...props}) => {
     },[cycles])
 
     useEffect(()=>{
-        setHistory(history => [...history, movingAverage.toFixed(2)]);
+      setHistory(history => [...history, movingAverage.toFixed(2)]);
     }, [movingAverage])
+
+    useEffect(()=>{
+      console.log("sim status : " + simulation);
+      if(simulation){
+        setCycles(0);
+        setSimulating(true);
+      }
+  }, [simulation, looping])
 
 
     useEffect(()=>{
-      let interval = 50;
-      setTimeout(() => stockMove({price : price, trend : trend}), interval);
-     
-      if(tick >= 25){
+      if(simulating){
+      setTimeout(()=>stockMove({price : price, trend : trend}), 100);
+      if(tick >= 10){
         setTick(0);
         setCycles(cycles => cycles+1);
-
         dispatch(update({ticker: ticker, price: price}));
         setMovingAverage(price);
-        
-
       }
-
-
-
-    },[price])
+      if(cycles > 0 && cycles % 5 === 0 && !looping){
+        console.log("cycles : " + cycles);
+        setSimulating(false);
+      }
+      }
+      /*
+      if(simulating){
+      let interval = 50;
+      setTimeout(() => stockMove({price : price, trend : trend}), interval);
+        if(tick >= 25){
+          setTick(0);
+          setCycles(cycles => cycles+1);
+          dispatch(update({ticker: ticker, price: price}));
+          setMovingAverage(price);
+        }
+      }
+      */
+    },[tick, simulating])
 
     function renderTrend(){
       if(trend < 0)
@@ -146,14 +165,22 @@ const Stock = ({stockTicker, stockPrice, stockTrend,...props}) => {
       return (changeSinceOpen() / open * 100);
     }
 
+    function handleClick(){
+      setSelected(selected => !selected);
+    }
+
   return (
-    <>
-    <div className='text-green-400 w-[200px] text-xl flex flex-col'>{ticker}  : ${price.toFixed(2)} {renderTrend()}
-    <span className='text-white text-sm'>Weekly Change :  {((price / lastMark) ).toFixed(2)}%</span>
+    <div className='w-[200px]'>
+    <div onClick={handleClick} className={`p-2 rounded-lg ${selected === true ? 'bg-zinc-700' : 'bg-transparent'}`}
+    
+    >
+    <div className='text-green-400  text-xl flex flex-col'>{ticker}  : ${price.toFixed(2)} {renderTrend()}
+    <span className='text-white text-sm'>Daily Change :  {(((price / lastMark) -1) * 100).toFixed(2)}%</span>
     <span className='text-white text-sm'>Change : ${(changeSinceOpen().toFixed(2))}</span>
     <span className='text-white text-sm'>Percent Change : {(percentChangeSinceOpen().toFixed(2))}%</span>
     </div>
-    </>
+    </div>
+    </div>
   )
 }
 

@@ -1,9 +1,7 @@
 import React from 'react'
-import { usePrice } from './PriceContext';
 
 const BuyButton = ({sellStock,...props}) => {
 
-    const prices = usePrice();
 
 
     function sell(){
@@ -11,7 +9,7 @@ const BuyButton = ({sellStock,...props}) => {
       }
 
   return (
-    <button onClick={sell} className='text-lg text-white'>Sell Stock!</button>
+    <button onClick={sell} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Sell Stock!</button>
   )
 }
 

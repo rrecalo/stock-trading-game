@@ -2,18 +2,24 @@ import './App.css';
 import React, {useState, useEffect} from 'react';
 import { getStocks, userLogin } from './API/API';
 import Stock from './Stock';
-import PriceProvider from './PriceContext';
 import BuyButton from './BuyButton';
 import SellButton from './SellButton';
 import { useSelector, useDispatch} from 'react-redux'
 import { buy, sell } from './redux/positionsSlice'; 
 import { decrementCapital, incrementCapital} from './redux/capitalSlice'
+import { StartSimulation, EndSimulation, toggleLoop } from './redux/simulationSlice';
+import Navbar from './Components/Pages/Navigation/Navbar';
+import { updatePortfolio } from './redux/portfolioSlice';
 
 function App() {
 
   const positions = useSelector((state) => state.positions);
   const prices = useSelector((state) => state.prices);
   const capital = useSelector((state) => state.capital);
+  const simulation = useSelector((state) => state.simulating.state);
+  const looping = useSelector((state) => state.simulating.isLooping);
+  const portfolio = useSelector((state) => state.portfolio);
+  const tradeSelection = useSelector((state) => state.tradeSelection);
   const dispatch = useDispatch();
 
   const [stocks, setStocks] = useState([]);
@@ -24,7 +30,7 @@ function App() {
   let URL = "https://stock-trading-game-server.onrender.com";
   
   //*** FOR DEV ***
-  //let URL ="http://localhost:3001";
+  //let URL = "http://localhost:3001";
 
 
   function setUser(userData){
@@ -42,8 +48,17 @@ function App() {
   }, [])
 
   useEffect(()=>{
+    calculatePortfolio(prices, positions, capital);
+  }, [prices, positions, capital])
 
-  }, [stocks]);
+  useEffect(()=>{
+    console.log("loop status : " + looping);
+    if(simulation === true && looping === false){
+      console.log("no loop");
+    setTimeout(()=>{endSim()}, 3000);
+    }
+    else return;
+  }, [simulation, looping]);
 
   useEffect(()=>{
     if(userName !== undefined && userName !== null){
@@ -51,6 +66,28 @@ function App() {
     }
   },[userName])
 
+  function startSim(){
+    if(simulation == false){
+    console.log("Simulation started");
+    dispatch(StartSimulation());
+    }
+    else {console.log("already running!!!")};
+  }
+  function endSim(){
+    dispatch(EndSimulation());
+  }
+  function loopSim(){
+    dispatch(toggleLoop());
+  }
+
+  function calculatePortfolio(prices, positions, capital){
+    let total = capital
+    
+    positions.forEach(element => {
+      total+=element.amount * prices.find(e => e.ticker === element.ticker).price;
+    });
+    dispatch(updatePortfolio({value : total}));
+  }
 
   function renderTickers(){
     if(stocks !== [])
@@ -80,13 +117,17 @@ function App() {
   }
 
   return (
-    <div className="App flex flex-col bg-gray-800 items-center">
-      <div className="mx-auto pt-[200px] pb-[25px] text-white text-2xl">Balance : {capital.toFixed(2)}</div>
-      <div className='flex flex-row gap-6 bg-gray-800 h-[50px] justify-center items-start h-screen'>
-        <PriceProvider values={[]} children={
-          (<><BuyButton buyStock={buyStock}/><SellButton sellStock={sellStock}/> {renderTickers()} </>) 
-          }>
-        </PriceProvider>
+    <div className="App flex flex-col bg-zinc-800 ">
+      <Navbar user={"User"}/>
+      <div className='flex flex-row gap-10 justify-center items-center h-[100px]'>
+      <BuyButton buyStock={buyStock}/>
+      <SellButton sellStock={sellStock}/> 
+      <button onClick={startSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Simulate Day</button>
+      <button onClick={loopSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Toggle Sim</button>
+      </div>
+      <div className='flex flex-row gap-2 bg-zinc-800 h-[50px] justify-center items-start h-screen'>
+          {renderTickers()}
+
       </div>
     </div>
   );
