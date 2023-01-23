@@ -4,6 +4,8 @@ import pricesReducer from './redux/pricesSlice'
 import capitalReducer from './redux/capitalSlice'
 import simulationReducer from './redux/simulationSlice'
 import portfolioReducer from './redux/portfolioSlice'
+import tradeSelectionReducer from './redux/tradeSelectionSlice'
+import dayCounterReducer from './redux/dayCounterSlice'
 
 export default configureStore({
   reducer: {
@@ -11,6 +13,9 @@ export default configureStore({
     prices: pricesReducer,
     capital: capitalReducer,
     portfolio: portfolioReducer,
+    tradeSelection: tradeSelectionReducer,
     simulating: simulationReducer,
+    dayCounter : dayCounterReducer,
+
   },
 })

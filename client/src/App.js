@@ -10,6 +10,8 @@ import { decrementCapital, incrementCapital} from './redux/capitalSlice'
 import { StartSimulation, EndSimulation, toggleLoop } from './redux/simulationSlice';
 import Navbar from './Components/Pages/Navigation/Navbar';
 import { updatePortfolio } from './redux/portfolioSlice';
+import {incrementDays} from './redux/dayCounterSlice';
+import PortfolioChart from './Components/PortfolioChart';
 
 function App() {
 
@@ -51,11 +53,14 @@ function App() {
     calculatePortfolio(prices, positions, capital);
   }, [prices, positions, capital])
 
+ 
+
   useEffect(()=>{
     console.log("loop status : " + looping);
     if(simulation === true && looping === false){
-      console.log("no loop");
-    setTimeout(()=>{endSim()}, 3000);
+      console.log("loop disabled");
+      setTimeout(()=>{endSim();}, 4000);
+      
     }
     else return;
   }, [simulation, looping]);
@@ -100,7 +105,7 @@ function App() {
   function buyStock(ticker){
       let stockPrice = prices.find(obj => obj.ticker === ticker).price;
       if(capital < stockPrice) return;
-      dispatch(buy({ticker : "SPY", amount: 10}));
+      dispatch(buy({ticker : ticker, amount: 10}));
       dispatch(decrementCapital({amount: stockPrice * 10}));
       //setCash(oldCash => oldCash - (stockPrice * 10));
     //}
@@ -110,27 +115,38 @@ function App() {
       let stockPrice = prices.find(obj => obj.ticker === ticker).price;
       if(positions.length === 0) return;
       if(positions.find(obj => obj.ticker === ticker).amount <= 0) return;
-      dispatch(sell({ticker : "SPY", amount: 10}));
+      dispatch(sell({ticker : ticker, amount: 10}));
       dispatch(incrementCapital({amount: stockPrice * 10}));
       //setCash(oldCash => oldCash + (prices.find(obj => obj.ticker === "SPY").price * 10));
     //}
   }
 
   return (
-    <div className="App flex flex-col bg-zinc-800">
+    <div className="App flex flex-col bg-zinc-800 h-screen">
       <Navbar user={"User"}/>
-        <div className='flex flex-row gap-10 justify-center items-center bg-zinc-800 '>
-      <BuyButton buyStock={buyStock}/>
-      <SellButton sellStock={sellStock}/> 
-      <button onClick={startSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Simulate 1 Day</button>
-      <button onClick={loopSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Toggle Loop</button>
-      </div>
-      <div className='flex flex-row flex-wrap gap-2 bg-zinc-800 justify-center items-start h-fit'>
+        <div className='flex flex-row gap-4 justify-center items-start bg-zinc-800 pt-[25px]'>
+          
+        <div className='text-green-500 text-xl w-[25%]'>
+            <span className='text-white '>Cash Balance : </span>${capital.toFixed(2)}
+        </div>
+        <BuyButton buyStock={buyStock}/>
+        <SellButton sellStock={sellStock}/> 
+        <button 
+          disabled={simulation}
+          onClick={startSim} 
+          className={`text-lg text-white p-2 py-3 bg-zinc-900 rounded-md ${simulation ? 'text-zinc-500' : 'text-white'}`}>
+            Simulate 1 Day
+        </button>
+        </div>
+      <div className='flex flex-row flex-wrap gap-8 bg-zinc-800 justify-center items-start h-fit pt-[25px]'>
           {renderTickers()}
 
       </div>
     </div>
   );
 }
+
+//<button onClick={loopSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Toggle Loop</button>
+
 
 export default App;

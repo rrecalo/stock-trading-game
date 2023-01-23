@@ -20,7 +20,7 @@ export const positionsSlice = createSlice({
             
             let obj = state.find(obj => obj.ticker === action.payload.ticker);
             var amt = 0;
-            if(obj !==undefined){
+            if(obj !== undefined){
                 amt = obj.amount;
             }
             return state.filter(obj => obj.ticker !== action.payload.ticker).concat([{ticker: action.payload.ticker, amount: amt-action.payload.amount}]);;

@@ -4,12 +4,12 @@ export const tradeSelection = createSlice({
     name: 'tradeSelection',
     initialState: "SPY",
     reducers: {
-        buy: (state, action)=>{
+        updateTradeSelection: (state, action)=>{
             return action.payload.ticker;
         }
     }
 })
 
-export const {update} = tradeSelection.actions;
+export const {updateTradeSelection} = tradeSelection.actions;
 
 export default tradeSelection.reducer;

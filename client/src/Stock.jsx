@@ -2,22 +2,25 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch} from 'react-redux'
 import { update } from './redux/pricesSlice'
 import { VictoryChart, VictoryAxis, VictoryTheme, VictoryCandlestick, VictoryLabel} from 'victory'
-
+import { incrementDays } from './redux/dayCounterSlice'
+import { updateTradeSelection } from './redux/tradeSelectionSlice'
 
 const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
   
+    var tickSpeed = 250;
     const stockPrices = useSelector((state) => state.prices);  
     const simulation = useSelector((state) => state.simulating.state);
     const looping = useSelector((state) => state.simulating.isLooping);
+    const days = useSelector((state) => state.dayCounter);
     const dispatch = useDispatch();
     const [selected, setSelected] = useState(false);
+    const selectedStock = useSelector((state) => state.tradeSelection);
 
     const [ticker, setTicker] = useState(stockTicker);
     const [openPrice] = useState(stockPrice);
     const [trend, setTrend] = useState(stockTrend);
     const [price, setPrice] = useState(stockPrice);
     const [tick, setTick] = useState(0);
-    const [cycles, setCycles] = useState(1);
     const [movingAverage, setMovingAverage] = useState(stockPrice);
     const [lastMark, setLastMark] = useState(stockPrice);
     const [history, setHistory] = useState([{x: 1, open: price, close: price, high: price, low : price}]);
@@ -145,98 +148,74 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     
       }
 
-    function pullBack(stock){
-      //console.log("pull back! : " + ticker + " from $" + stock.price + " to : $" + (stock.price*0.97).toFixed(2));
-      setPrice(stock.price * 0.97);
-      setTrend(0);
-      setLastMark(stock.price * 0.97);
-      setTick((tick) => tick+1);
-    }
-    function recover(stock){
-      setPrice(stock.price * 1.03);
-      setTrend(0);
-      setLastMark(stock.price * 1.03);
-      setTick((tick) => tick+1);
-    }
-
     useEffect(()=>{
-      //setStock({ticker : stockTicker, price : stockPrice, trend : stockTrend});
-      if(cycles % 20 === 0){
-        setLastMark(movingAverage);
-      }
-    },[cycles])
+      dispatch(update({ticker: ticker, price: price}));
+    }, [])
 
     useEffect(()=>{
       //console.log("sim status : " + simulation);
       if(simulation){
-        setCycles(0);
         setSimulating(true);
       }
     }, [simulation, looping])
 
     useEffect(()=>{
-      if(history.length > 0 && history.length % 15 == 0 && looping === false){
+      if(ticker=== "SPY"){
+        console.log("simulating : " + simulating);
+        console.log("history length:  " + history.length); 
+        console.log("loop variable : " + looping); }
+      if(history.length > 2 && (history.length % 15 === 0) && looping === false){
         setSimulating(false);
         setLastMark(movingAverage);
+        if(ticker === "SPY") 
+        {
+        dispatch(incrementDays(1));
+        }
+        
       }
+      //if(ticker === "SPY" && history.length % 15 == 0 && history.length > 2){}
     }, [history])
+
+    useEffect(()=>{
+      if(selectedStock !== ticker){
+        dispatch(updateTradeSelection({ticker: ticker}));
+      }
+    }, [selected]);
+
+    useEffect(()=>{
+        if(selected){
+          if(ticker !== selectedStock){
+            setSelected(false);
+          }
+        }
+    }, [selectedStock, selected]);
 
     useEffect(()=>{
       //{x: new Date(2016, 6, 1), open: 5, close: 10, high: 15, low: 0},
         //f(ticker === "SPY"){
         //console.log(candleData);
-        if(history.length > 250){
-          console.log("close price : " + price);
-          setHistory([...history.slice(1), {...candleData, close: price, x: history[history.length-1].x +1}]);
+        if(history.length > 50){
+          //console.log("close price : " + price);
+          setHistory([...history, {...candleData, close: price, x: history[history.length-1].x +1}]);
           setCandleData({...candleData, open: price, high:price, low: price});
         }
         else {
         setHistory([...history, {...candleData, close: price, x: history[history.length-1].x +1}]);
         setCandleData({...candleData, open: price, high:price, low: price});
         }
+        
         //}
 
     }, [movingAverage])
 
-    // useEffect(()=>{
-    //   if(simulating){
-    //   //console.log("TICK : " + tick);
-    //   setInterval(()=>stockMove({price : price, trend : trend}), 1000);
-
-    //   if(tick >= 1){
-    //     setTick(0);
-    //     setCycles(cycles => cycles+1);
-    //     dispatch(update({ticker: ticker, price: price}));
-    //     //setCandleData({...candleData, close : price});
-    //     setMovingAverage(price);
-    //   }
-    //   if(cycles > 0 && cycles % 5 === 0 && !looping){
-    //     console.log("cycles : " + cycles);
-    //     setSimulating(false);
-    //   }
-    //   }
-    //   /*
-    //   if(simulating){
-    //   let interval = 50;
-    //   setTimeout(() => stockMove({price : price, trend : trend}), interval);
-    //     if(tick >= 25){
-    //       setTick(0);
-    //       setCycles(cycles => cycles+1);
-    //       dispatch(update({ticker: ticker, price: price}));
-    //       setMovingAverage(price);
-    //     }
-    //   }
-    //   */
-    // },[tick, simulating])
 
     useEffect(() =>{
       if(simulating || (simulating && looping)){
-      setTimeout(()=> stockMove({price : price, trend : trend}), 500);
+      setTimeout(()=> stockMove({price : price, trend : trend}), tickSpeed);
       dispatch(update({ticker: ticker, price: price}));
       setMovingAverage(price);
       }
     }, [price, simulating]);
-
 
 
     useEffect(()=>{
@@ -248,11 +227,9 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
 
     function renderTrend(){
       if(trend < 0)
-      return <div className='flex flex-row gap-6 justify-left'><div className='text-red-400 text-xs w-8'>{trend} : </div><div >${movingAverage.toFixed(2)} 
-      </div></div>
+      return <span className='text-red-100 text-xs'>{trend}</span>
       else
-      return <div className='flex flex-row gap-6 justify-left'><div className='text-green-400 text-xs w-8'>{trend} : </div><div>${movingAverage.toFixed(2)}
-      </div></div>
+      return <span className='text-green-100 text-xs'>{trend}</span>
     }
     
     function changeSinceOpen(){
@@ -268,21 +245,26 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     }
 
   return (
-    <div className='w-[500px]'>
-    <div onClick={handleClick} className={`p-2 rounded-lg ${selected === true ? 'bg-zinc-700' : 'bg-transparent'}`}
-    
-    >
-    <div className='text-green-400  text-xl flex flex-col'>{ticker}  : ${price.toFixed(2)} {renderTrend()}
-    <span className='text-white text-sm'>Daily Change :  {(((movingAverage / lastMark) -1) * 100).toFixed(2)}%</span>
-    <span className='text-white text-sm'>Change : ${(changeSinceOpen().toFixed(2))}</span>
-    <span className='text-white text-sm'>Percent Change : {(percentChangeSinceOpen().toFixed(2))}%</span>
-    <div>
+    <div className='w-[250px] flex flex-col justify-center items-center'>
+    <div onClick={handleClick} className={`p-1 rounded-lg ${selectedStock === ticker ? 'bg-zinc-700' : 'bg-transparent'}`}>
+   
+    <div className='text-green-400  text-xl flex flex-col whitespace-nowrap '>
+    <div className='flex flex-row justify-between mx-auto w-[200px]'>
+      <div>{ticker}{renderTrend()}</div>
+      <div>${price.toFixed(2)}</div>
+      </div>
+    <div className='flex flex-col justify-between mx-auto w-[200px]'>
+    <span className='text-white text-xs'>Daily Change :  {(((movingAverage / lastMark) -1) * 100).toFixed(2)}%</span>
+    <span className='text-white text-xs'>YTD Change : ${(changeSinceOpen().toFixed(2))}</span>
+    <span className='text-white text-xs'>YTD Percent : {(percentChangeSinceOpen().toFixed(2))}%</span>
+    </div>
+    <div className='w-[250px]'>
 
       
       <VictoryChart
         theme={VictoryTheme.material}
-        domainPadding={{ x: 25 }}
-        scale={{ x: "time" }}
+        domainPadding={{ x: 10, y: 10 }}
+        scale={{ x: "" }}
         style={{
           background: { fill: "black" }
         }}
@@ -292,10 +274,10 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
       style={{tickLabels:{fill : "white"}}}
       />
       <VictoryCandlestick
-        candleRatio={0.1}
-        candleWidth={3}
+        candleRatio={1}
+        candleWidth={5}
         candleColors={{ positive: "#22c55e", negative: "#c43a31" }}
-        data={history}
+        data={history.slice(-50)}
         open="open"
         low="low"
         high="high"
