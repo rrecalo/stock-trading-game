@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 const BuyButton = ({sellStock,...props}) => {
 
     const activeSelection = useSelector((state) => state.tradeSelection);  
-    const positions = useSelector((state) => state.positions);
 
     function sell(){
         sellStock(activeSelection);

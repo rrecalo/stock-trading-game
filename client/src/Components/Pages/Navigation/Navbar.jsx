@@ -5,7 +5,6 @@ import PortfolioChart from '../../PortfolioChart';
 const Navbar = ({user, ...props}) => {
 
     const portfolio = useSelector((state) => state.portfolio);
-    const cash = useSelector((state) => state.capital);
     const days = useSelector((state) => state.dayCounter);
 
   return (

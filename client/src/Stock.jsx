@@ -8,10 +8,10 @@ import { updateTradeSelection } from './redux/tradeSelectionSlice'
 const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
   
     var tickSpeed = 250;
-    const stockPrices = useSelector((state) => state.prices);  
+    //const stockPrices = useSelector((state) => state.prices);  
     const simulation = useSelector((state) => state.simulating.state);
     const looping = useSelector((state) => state.simulating.isLooping);
-    const days = useSelector((state) => state.dayCounter);
+    //const days = useSelector((state) => state.dayCounter);
     const dispatch = useDispatch();
     const [selected, setSelected] = useState(false);
     const selectedStock = useSelector((state) => state.tradeSelection);
@@ -20,7 +20,6 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     const [openPrice] = useState(stockPrice);
     const [trend, setTrend] = useState(stockTrend);
     const [price, setPrice] = useState(stockPrice);
-    const [tick, setTick] = useState(0);
     const [movingAverage, setMovingAverage] = useState(stockPrice);
     const [lastMark, setLastMark] = useState(stockPrice);
     const [history, setHistory] = useState([{x: 1, open: price, close: price, high: price, low : price}]);
@@ -144,7 +143,6 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
         //if(ticker === "SPY") console.log(stock.price - oldPrice);
         setPrice(stock.price);
         setTrend(stock.trend);
-        setTick((tick) => tick+1);
     
       }
 

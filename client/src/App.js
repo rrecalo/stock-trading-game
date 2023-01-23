@@ -10,8 +10,6 @@ import { decrementCapital, incrementCapital} from './redux/capitalSlice'
 import { StartSimulation, EndSimulation, toggleLoop } from './redux/simulationSlice';
 import Navbar from './Components/Pages/Navigation/Navbar';
 import { updatePortfolio } from './redux/portfolioSlice';
-import {incrementDays} from './redux/dayCounterSlice';
-import PortfolioChart from './Components/PortfolioChart';
 
 function App() {
 
@@ -20,8 +18,8 @@ function App() {
   const capital = useSelector((state) => state.capital);
   const simulation = useSelector((state) => state.simulating.state);
   const looping = useSelector((state) => state.simulating.isLooping);
-  const portfolio = useSelector((state) => state.portfolio);
-  const tradeSelection = useSelector((state) => state.tradeSelection);
+  //const portfolio = useSelector((state) => state.portfolio);
+  //const tradeSelection = useSelector((state) => state.tradeSelection);
   const dispatch = useDispatch();
 
   const [stocks, setStocks] = useState([]);
