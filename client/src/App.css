@@ -9,3 +9,47 @@ body{
     user-select: none; /* Non-prefixed version, currently */
 
 }
+
+@import "https://code.highcharts.com/css/highcharts.css";
+
+.highcharts-background{
+    fill: #18181b;
+}
+.highcharts-point{
+    fill: #14532d;
+    stroke: #18181b;
+}
+.highcharts-graph{
+    stroke:#15803d !important;
+}
+.highcharts-axis-line{
+    stroke:#14532d !important;
+}
+.highcharts-tick{
+    stroke:#14532d !important;
+}
+.highcharts-grid-line{
+    stroke: #14532d;
+}
+
+.highcharts-tooltip{
+}
+.highcharts-tooltip-box{
+    fill: #18181b;
+    stroke: #14532d;
+}
+.highcharts-tooltip text{
+    fill: white;
+}
+.highcharts-tooltip-header{
+
+}
+
+.highcharts-candlestick-series .highcharts-point-up{
+    fill: #22c55e;
+    stroke: none ;
+}
+.highcharts-candlestick-series .highcharts-point-down{
+    fill: #c43a31;
+    stroke: none ;
+}

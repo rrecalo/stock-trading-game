@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch} from 'react-redux'
 import { update } from './redux/pricesSlice'
-import { VictoryChart, VictoryAxis, VictoryTheme, VictoryCandlestick, VictoryLabel} from 'victory'
 import { incrementDays } from './redux/dayCounterSlice'
 import { updateTradeSelection } from './redux/tradeSelectionSlice'
+import StockChart from './Components/StockChart'
 
 const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
   
@@ -158,10 +158,10 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     }, [simulation, looping])
 
     useEffect(()=>{
-      if(ticker=== "SPY"){
-        console.log("simulating : " + simulating);
-        console.log("history length:  " + history.length); 
-        console.log("loop variable : " + looping); }
+      // if(ticker=== "SPY"){
+      //   console.log("simulating : " + simulating);
+      //   console.log("history length:  " + history.length); 
+      //   console.log("loop variable : " + looping); }
       if(history.length > 2 && (history.length % 15 === 0) && looping === false){
         setSimulating(false);
         setLastMark(movingAverage);
@@ -256,34 +256,8 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     <span className='text-white text-xs'>YTD Change : ${(changeSinceOpen().toFixed(2))}</span>
     <span className='text-white text-xs'>YTD Percent : {(percentChangeSinceOpen().toFixed(2))}%</span>
     </div>
-    <div className='w-[250px]'>
-
-      
-      <VictoryChart
-        theme={VictoryTheme.material}
-        domainPadding={{ x: 10, y: 10 }}
-        scale={{ x: "" }}
-        style={{
-          background: { fill: "black" }
-        }}
-      >
-      <VictoryAxis style={{ grid: { stroke: "white", } }}/>
-      <VictoryAxis dependentAxis
-      style={{tickLabels:{fill : "white"}}}
-      />
-      <VictoryCandlestick
-        candleRatio={1}
-        candleWidth={5}
-        candleColors={{ positive: "#22c55e", negative: "#c43a31" }}
-        data={history.slice(-50)}
-        open="open"
-        low="low"
-        high="high"
-        highLabelComponent={<VictoryLabel className='text-white text-3xl'/>}
-        wickStrokeWidth={2}
-        //domain={{y:[movingAverage * 0.99, movingAverage * 1.01]}}
-      />
-      </VictoryChart>
+    <div className='w-[250px] flex flex-col items-center pt-[25px]'>
+      <StockChart data={history.slice(-25)}/>
     </div>
     </div>
     </div>

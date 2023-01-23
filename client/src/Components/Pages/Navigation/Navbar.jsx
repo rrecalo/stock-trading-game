@@ -26,7 +26,7 @@ const Navbar = ({user, ...props}) => {
               ${portfolio.toFixed(2)}
             </div>
           </div>
-        <div className='h-[100px] w-[200px]'>
+        <div className='h-[100px]'>
         <PortfolioChart />
         </div>
         </div>

@@ -10,6 +10,8 @@ import { decrementCapital, incrementCapital} from './redux/capitalSlice'
 import { StartSimulation, EndSimulation, toggleLoop } from './redux/simulationSlice';
 import Navbar from './Components/Pages/Navigation/Navbar';
 import { updatePortfolio } from './redux/portfolioSlice';
+import PortfolioChart from './Components/PortfolioChart';
+
 
 function App() {
 
@@ -54,7 +56,7 @@ function App() {
  
 
   useEffect(()=>{
-    console.log("loop status : " + looping);
+    //console.log("loop status : " + looping);
     if(simulation === true && looping === false){
       console.log("loop disabled");
       setTimeout(()=>{endSim();}, 4000);
