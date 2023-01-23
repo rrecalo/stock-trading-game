@@ -21,15 +21,22 @@ body{
 }
 .highcharts-graph{
     stroke:#15803d !important;
+    filter: url(#glow) !important;
 }
 .highcharts-axis-line{
     stroke:#14532d !important;
+    filter: url(#glow) !important;
 }
 .highcharts-tick{
     stroke:#14532d !important;
+    filter: url(#glow) !important;
 }
 .highcharts-grid-line{
     stroke: #14532d;
+    filter: url(#glow) !important;
+}
+.highcharts-axis-labels{
+    filter: url(#glow) !important;
 }
 
 .highcharts-tooltip{
@@ -48,8 +55,10 @@ body{
 .highcharts-candlestick-series .highcharts-point-up{
     fill: #22c55e;
     stroke: none ;
+    filter: url(#glow) !important;
 }
 .highcharts-candlestick-series .highcharts-point-down{
     fill: #c43a31;
     stroke: none ;
+    filter: url(#glow) !important;
 }

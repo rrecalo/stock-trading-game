@@ -47,6 +47,27 @@ const StockChart = ({data, ...props}) => {
                 }
             },
         },
+        defs: {
+            glow: {
+                tagName: 'filter',
+                id: 'glow',
+                opacity: 0.5,
+                children: [{
+                    tagName: 'feGaussianBlur',
+                    result: 'coloredBlur',
+                    stdDeviation: 2.5
+                }, {
+                    tagName: 'feMerge',
+                    children: [{
+                        tagName: 'feMergeNode',
+                        in: 'coloredBlur'
+                    }, {
+                        tagName: 'feMergeNode',
+                        in: 'SourceGraphic'
+                    }]
+                }]
+            }
+        },
         credits:{enabled:false}
         
       };

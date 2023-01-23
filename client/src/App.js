@@ -29,10 +29,10 @@ function App() {
 
 
   //LIVE URL 
-  //let URL = "https://stock-trading-game-server.onrender.com";
+  let URL = "https://stock-trading-game-server.onrender.com";
   
   //*** FOR DEV ***
-  let URL = "http://localhost:3001";
+  //let URL = "http://localhost:3001";
 
 
   function setUser(userData){
