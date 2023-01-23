@@ -4,10 +4,8 @@ import {useSelector} from 'react-redux'
 const BuyButton = ({buyStock,...props}) => {
 
     const activeSelection = useSelector((state) => state.tradeSelection);  
-    const simulation = useSelector((state) => state.simulating.state);
 
     function buy(){
-        console.log(activeSelection);
         buyStock(activeSelection);
       }
 

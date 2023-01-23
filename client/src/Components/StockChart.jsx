@@ -1,40 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import Highcharts from 'highcharts';
+import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 
-const PortfolioChart = () => {
+const StockChart = ({data, ...props}) => {
 
-    const portfolio = useSelector((state) => state.portfolio);
-    const [portfolioHistory, setPortfolioHistory] = useState([10000]);
 
-    useEffect(()=>{
-        if(portfolio > 0){
-          if(portfolioHistory.length < 50){
-            setPortfolioHistory(history=> [...history, (Math.round(portfolio * 100) / 100)]);
-          }
-          else{
-            setPortfolioHistory(history=> [...history.slice(1), (Math.round(portfolio * 100) / 100)]);
-          }
-        }
-      },[portfolio])
 
       const options = {
         chart: {
-          type: 'spline',
-          height:100,
-          width:100,
-          margin: [0, 0, 0, 0],
+          //type: "candlestick",
+          height:250,
+          width:250,
+          //margin: [0, 0, 0, 0],
           styledMode: true,
           animation:{
-            duration : 200
+            duration : 10
           }
         },
         legend:{enabled:false},
         title:{text:undefined},
         series: [
           {
-            data: portfolioHistory, 
+            type: 'candlestick',
+            data: data, 
             marker: {
                 enabled: false,
                 states:{
@@ -45,8 +33,9 @@ const PortfolioChart = () => {
         ],
         tooltip: { enabled: false },
         yAxis:{
-            softMin: portfolio * 0.98,
-            softMax: portfolio * 1.02,
+            title:{text:undefined},
+            softMin: data.open * 0.95,
+            softMax: data.open * 1.05,
         },
         plotOptions: {
             line: {
@@ -64,11 +53,8 @@ const PortfolioChart = () => {
 
   return (
     
-    <div>
         <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
   )
 }
 
-export default PortfolioChart
-
+export default StockChart
