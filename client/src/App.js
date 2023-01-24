@@ -137,7 +137,9 @@ function App() {
             <div className='flex flex-row justify-between w-[100%] text-white text-3xl font-extralight pb-2'>
               <div className='flex flex-row gap-6'>
                 <div className='text-white text-3xl font-extralight'>Portfolio</div>
-                <button onClick={handleViewChange} className='text-lg bg-deep-900 p-2 rounded-2xl font-extralight'>View Mode</button>
+                <button onClick={handleViewChange} className='text-lg bg-deep-900 p-2 rounded-2xl font-extralight w-32'>
+                  {viewYTD ? "All-Time": "Short-Term"}
+                </button>
               </div>
               <div className='text-green-500 text-3xl font-extralight'>${portfolio.toFixed(2)}</div>
             </div>
