@@ -19,9 +19,7 @@ app.use(express.json());
 app.use(cors());
 
 let api_token = process.env.API_TOKEN;
-console.log(api_token);
 let token = process.env.MONGODB_TOKEN;
-console.log(token);
 
 mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/StockTradingGame?retryWrites=true&w=majority");
 //mongodb+srv://robertrecalo:<password>@freecluster.ywz3xk7.mongodb.net/?retryWrites=true&w=majority

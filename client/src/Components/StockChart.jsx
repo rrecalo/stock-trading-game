@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
+import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+
+NoDataToDisplay(Highcharts);
 
 const StockChart = ({data, ...props}) => {
 
 
-
       const options = {
         chart: {
+            events: {
+            load() {
+                this.showLoading();
+                setTimeout(this.hideLoading.bind(this), 1000);
+            }
+            },
           //type: "candlestick",
           height:250,
           width:250,
@@ -17,12 +25,14 @@ const StockChart = ({data, ...props}) => {
             duration : 10
           }
         },
+        noData:{},
+        loading:{},
         legend:{enabled:false},
         title:{text:undefined},
         series: [
           {
             type: 'candlestick',
-            data: data, 
+            data: data.slice(2), 
             marker: {
                 enabled: false,
                 states:{

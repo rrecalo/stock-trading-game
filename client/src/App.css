@@ -38,6 +38,9 @@ body{
 .highcharts-axis-labels{
     filter: url(#glow) !important;
 }
+.highcharts-loading {
+    background-color: #14532d;    
+}
 
 .highcharts-tooltip{
 }
