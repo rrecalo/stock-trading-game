@@ -5,7 +5,7 @@ import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 
 NoDataToDisplay(Highcharts);
 
-const StockChart = ({data, ...props}) => {
+const StockCandleChart = ({data, ...props}) => {
 
 
       const options = {
@@ -17,8 +17,8 @@ const StockChart = ({data, ...props}) => {
             }
             },
           //type: "candlestick",
-          height:250,
-          width:250,
+          height:25,
+          width:25,
           //margin: [0, 0, 0, 0],
           styledMode: true,
           animation:{
@@ -28,7 +28,11 @@ const StockChart = ({data, ...props}) => {
         noData:{},
         loading:{},
         legend:{enabled:false},
-        title:{text:undefined},
+        title:{text:undefined,
+            // style: {
+            //     color: '#FF00FF',
+            //     fontWeight: 'bold'}
+            },
         series: [
           {
             type: 'candlestick',
@@ -57,35 +61,37 @@ const StockChart = ({data, ...props}) => {
                 }
             },
         },
-        defs: {
-            glow: {
-                tagName: 'filter',
-                id: 'glow',
-                opacity: 0.5,
-                children: [{
-                    tagName: 'feGaussianBlur',
-                    result: 'coloredBlur',
-                    stdDeviation: 2.5
-                }, {
-                    tagName: 'feMerge',
-                    children: [{
-                        tagName: 'feMergeNode',
-                        in: 'coloredBlur'
-                    }, {
-                        tagName: 'feMergeNode',
-                        in: 'SourceGraphic'
-                    }]
-                }]
-            }
-        },
+        // defs: {
+        //     glow: {
+        //         tagName: 'filter',
+        //         id: 'glow',
+        //         opacity: 0.5,
+        //         children: [{
+        //             tagName: 'feGaussianBlur',
+        //             result: 'coloredBlur',
+        //             stdDeviation: 2.5
+        //         }, {
+        //             tagName: 'feMerge',
+        //             children: [{
+        //                 tagName: 'feMergeNode',
+        //                 in: 'coloredBlur'
+        //             }, {
+        //                 tagName: 'feMergeNode',
+        //                 in: 'SourceGraphic'
+        //             }]
+        //         }]
+        //     }
+        // },
         credits:{enabled:false}
         
       };
 
   return (
     
-        <HighchartsReact highcharts={Highcharts} options={options} />
+    <div>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
   )
 }
 
-export default StockChart
+export default StockCandleChart

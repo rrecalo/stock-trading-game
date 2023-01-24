@@ -8,12 +8,18 @@ const Navbar = ({user, ...props}) => {
     const days = useSelector((state) => state.dayCounter);
 
   return (
-        <div className='w-full fixed-top flex flex-row bg-zinc-900 h-[100px] items-center justify-between px-[25px] lg:px-[75px]'>
-        <div>
-        <div className='text-white text-2xl'>
-        Welcome, {user}
-        </div>
-        <div className='text-zinc-500 text-xl'>
+    <div className='w-[8%] fixed-top flex flex-col bg-zinc-800 h-screen items-center justify-between px-[25px] lg:px-[75px]'>
+      <div className='text-white text-2xl'>
+      {user}
+      </div>
+    </div>
+  )
+}
+
+export default Navbar
+
+/**
+ *  <div className='text-zinc-500 text-xl'>
           It has been <span className='text-white'>{days}</span> days
         </div>
         </div>
@@ -29,10 +35,5 @@ const Navbar = ({user, ...props}) => {
         <div className='h-[100px]'>
         <PortfolioChart />
         </div>
-        </div>
-        
-    </div>
-  )
-}
-
-export default Navbar
+ * 
+ */

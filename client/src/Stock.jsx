@@ -3,11 +3,19 @@ import { useSelector, useDispatch} from 'react-redux'
 import { update } from './redux/pricesSlice'
 import { incrementDays } from './redux/dayCounterSlice'
 import { updateTradeSelection } from './redux/tradeSelectionSlice'
-import StockChart from './Components/StockChart'
+import StockSummaryChart from './Components/StockSummaryChart'
 
 const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
   
-    var tickSpeed = 250;
+
+    //default is 250
+    var tickSpeed = 150;
+
+    //default is 15
+    var dayLengthInTicks = 30;
+
+    var summaryChartLength = 100;
+
     //const stockPrices = useSelector((state) => state.prices);  
     const simulation = useSelector((state) => state.simulating.state);
     const looping = useSelector((state) => state.simulating.isLooping);
@@ -28,65 +36,22 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
 
     function stockMove(stock){
 
-        //10, 750, 2.5
-        var TREND_STRENGTH_COEFFICIENT = 15; //higher = stronger/longer trends
-        var PERCENT_CHANGE_COEFFICIENT = 25; // higher == smaller moves 50 works well
+        //DECENT VALUES
+        //15
+        //25 or 50
+        //2
+        var TREND_STRENGTH_COEFFICIENT = 20; //higher = stronger/longer trends
+        //250
+        var PERCENT_CHANGE_COEFFICIENT = 100; // higher == smaller moves 50 works well
         var TREND_PRICE_EFFECT_COEFFCIENT = 2; //higher == stronger price moves relative to trend value
         
-        /**
-        if(stock.price > lastMark && stock.price / lastMark >= 1.03){
-          pullBack(stock);
-          return;
-        }
-        else if (stock.price < lastMark && stock.price / lastMark <= 0.97){
-          recover(stock);
-          return;
-        }
-
-        let oldPrice = stock.price;
         
-        
-        var baseVal = 0.01;
-        function randomMove(base){
-          return (baseVal * (Math.random() / (PERCENT_CHANGE_COEFFICIENT / stock.trend)));
-        }
 
-        function upMove(sp){
-          return sp * (1 + randomMove(0.005));
-        }
-        function downMove(sp){
-          return sp * (1 - randomMove(0.005));
-        }
-        function neutralMove(sp){
-          if(Math.random() > 0.5){
-            return sp * (1 + randomMove(0.0025));
-          }
-          else return sp * (1 - randomMove(0.0025));
-        }
-        let chance = Math.random();
-        if(stock.trend > 5){
-          chance = 0;
-        }
-        if (stock.trend < -5){
-          chance  = 1;
-        }
-        if(chance > 0.5){
-          stock.price = upMove(stock.price);
-          stock.trend += 1;
-        }
-        else if (chance < 0.4){
-          stock.price = downMove(stock.price);
-          stock.trend -= 1;
-        }
-        else{
-          stock.price = downMove(stock.price);
-        }
-         */
+        
         function calc(baseValue){
           //default basevalue == 0.01
           return baseValue * (Math.random() / (PERCENT_CHANGE_COEFFICIENT / (Math.abs(stock.trend) * TREND_PRICE_EFFECT_COEFFCIENT)));
         }
-        //sP * (1 - (
 
         if(stock.trend <= -2){
           let chance = Math.random();
@@ -138,9 +103,6 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
           }
         }
         
-        //let fixed = parseInt(stock.price).toFixed(2);
-        //setPrice(Math.round(stock.price * 1000) / 1000);
-        //if(ticker === "SPY") console.log(stock.price - oldPrice);
         setPrice(stock.price);
         setTrend(stock.trend);
     
@@ -154,6 +116,7 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
       //console.log("sim status : " + simulation);
       if(simulation){
         setSimulating(true);
+        setLastMark(movingAverage);
       }
     }, [simulation, looping])
 
@@ -162,9 +125,8 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
       //   console.log("simulating : " + simulating);
       //   console.log("history length:  " + history.length); 
       //   console.log("loop variable : " + looping); }
-      if(history.length > 2 && (history.length % 15 === 0) && looping === false){
-        setSimulating(false);
-        setLastMark(movingAverage);
+      if(history.length > 2 && (history.length % dayLengthInTicks === 0) && looping === false){
+        //setSimulating(false);
         if(ticker === "SPY") 
         {
         dispatch(incrementDays(1));
@@ -208,6 +170,11 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
 
 
     useEffect(() =>{
+      if(ticker === "SPY"){
+      console.log("simulating : " + simulating);
+      console.log("looping : " + looping);
+      console.log("price : " + price);
+      }
       if(simulating || (simulating && looping)){
       setTimeout(()=> stockMove({price : price, trend : trend}), tickSpeed);
       dispatch(update({ticker: ticker, price: price}));
@@ -243,26 +210,34 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     }
 
   return (
-    <div className='w-[250px] flex flex-col justify-center items-center'>
-    <div onClick={handleClick} className={`p-1 rounded-lg ${selectedStock === ticker ? 'bg-zinc-700' : 'bg-transparent'}`}>
-   
-    <div className='text-green-400  text-xl flex flex-col whitespace-nowrap '>
-    <div className='flex flex-row justify-between mx-auto w-[200px]'>
-      <div>{ticker}{renderTrend()}</div>
-      <div>${price.toFixed(2)}</div>
+    <div onClick={handleClick} 
+      className={`${selectedStock === ticker ? 'border' : ""} border-deep-200 flex flex-col w-[200px] h-[100px] p-3 rounded-2xl bg-deep-900 shadow-xl`}>
+    
+        <div className='text-xl flex flex-row justify-between'>
+          <div className='flex flex-col text-white justify-start font-normal'>
+              <div className='font-normal text-lg'>{ticker}</div>
+              <div className='font-light text-deep-50 text-lg'>${price.toFixed(2)}</div>
+              <div className={`text-xs ${((movingAverage / lastMark) -1 < 0) ? 'text-red-500' : 'text-green-500'}`}>{(((movingAverage / lastMark) -1) * 100).toFixed(2)}%</div>
+          </div>
+        
+          <div className='flex flex-col w-[50%] justify-end'>
+          <StockSummaryChart data={history.slice(summaryChartLength * -1)} />
+          </div>
       </div>
-    <div className='flex flex-col justify-between mx-auto w-[200px]'>
-    <span className='text-white text-xs'>Daily Change :  {(((movingAverage / lastMark) -1) * 100).toFixed(2)}%</span>
-    <span className='text-white text-xs'>YTD Change : ${(changeSinceOpen().toFixed(2))}</span>
-    <span className='text-white text-xs'>YTD Percent : {(percentChangeSinceOpen().toFixed(2))}%</span>
-    </div>
-    <div className='w-[250px] flex flex-col items-center pt-[25px]'>
-      <StockChart data={history.slice(-25)}/>
-    </div>
-    </div>
-    </div>
     </div>
   )
 }
 
 export default Stock
+
+//
+//<div onClick={handleClick} className={`p-1 rounded-lg ${selectedStock === ticker ? 'bg-transparent' : 'bg-transparent'}`}>
+//<StockChart data={history.slice(-25)}/>
+
+/**
+ * <div className='flex flex-col justify-between mx-auto w-[200px]'>
+    <span className='text-white text-xs'>Daily Change :  {(((movingAverage / lastMark) -1) * 100).toFixed(2)}%</span>
+    <span className='text-white text-xs'>YTD Change : ${(changeSinceOpen().toFixed(2))}</span>
+    <span className='text-white text-xs'>YTD Percent : {(percentChangeSinceOpen().toFixed(2))}%</span>
+    </div>
+ */
