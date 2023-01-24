@@ -11,7 +11,7 @@ const BuyButton = ({buyStock,...props}) => {
 
   return (
     <button 
-    onClick={buy} className='text-lg text-white w-40 p-2 py-3 px-4 bg-zinc-900 rounded-md'>Buy {activeSelection}</button>
+    onClick={buy} className='text-lg text-white w-40 p-3 px-4 bg-deep-900 rounded-2xl'>Buy 10 {activeSelection}</button>
   )
 }
 

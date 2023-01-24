@@ -2,28 +2,27 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import StockSummaryChartStyles from './StockSummaryChartStyles.css';
 
+const StockSummaryChart = ({data, ...props}) => {
 
-const PortfolioChart = ({viewYTD, ...props}) => {
+    const [priceData, setPriceData] = useState(data.map(e => e.close));
 
-    const portfolio = useSelector((state) => state.portfolio);
-    const [portfolioHistory, setPortfolioHistory] = useState([10000]);
-
-    
-
-    useEffect(()=>{
-        if(portfolio > 0){
-          setPortfolioHistory(history=> [...history, (Math.round(portfolio * 100) / 100)]);
+    useEffect(() => {
+        if(data.slice(-1).close !== priceData){
+        setPriceData(data.map(e => e.close));
         }
-      },[portfolio])
+    },[data]);
+
 
       const options = {
         chart: {
           type: 'area',
-          height:300,
-          styledMode: true,
+          height:'80',
+          width:'100',
+          styledMode: false,
           animation:{
-            duration : 0
+            duration : 50
           },
           marginBottom:5,
           marginTop:0,
@@ -36,7 +35,7 @@ const PortfolioChart = ({viewYTD, ...props}) => {
         //title:{text:"Portfolio", align:"left", x:0},
         series: [
           {
-            data: viewYTD ? portfolioHistory : portfolioHistory.slice(-250), 
+            data: priceData,//[data.map(e=> {return e.close})];
             marker: {
                 enabled: false,
                 states:{
@@ -47,17 +46,18 @@ const PortfolioChart = ({viewYTD, ...props}) => {
         ],
         tooltip: { enabled: false },
         yAxis:{
-            labels:{x:5, y:-5, align:"left",
-          },
-            ceiling:viewYTD ? Math.max(...portfolioHistory) * 1.01 : Math.max(...portfolioHistory.slice(-250)) * 1.01,
-            floor:viewYTD ? Math.min(...portfolioHistory) * 0.99 : Math.min(...portfolioHistory.slice(-250)) * 0.99,
+            labels:{enabled: false},
+            ceiling: Math.max(...priceData) * 1.01,
+            floor: Math.min(...priceData) * 0.99,
             //softMin: portfolio * 0.95,
             //softMax: portfolio * 1.05,
             title:{text:undefined},
             //minPadding:25,
             maxPadding:0.05,
         },
-        xAxis:{labels:{enabled:false}, tickLength:0,
+        xAxis:{
+            style:{color:"transparent"},
+            labels:{enabled:false}, tickLength:0,
         minPadding:0.0, maxPadding:0.0},
         plotOptions: {
             line: {
@@ -74,11 +74,12 @@ const PortfolioChart = ({viewYTD, ...props}) => {
       };
 
   return (
-    <div id="portfolio_chart" className=''>
-    <HighchartsReact  highcharts={Highcharts} options={options} />
+    <div id="stock_summary_chart">
+    
+    <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   )
 }
 
-export default PortfolioChart
+export default StockSummaryChart
 
