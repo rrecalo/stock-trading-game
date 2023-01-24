@@ -14,7 +14,7 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
     //default is 15
     var dayLengthInTicks = 30;
 
-    var summaryChartLength = 100;
+    var summaryChartLength = 250;
 
     //const stockPrices = useSelector((state) => state.prices);  
     const simulation = useSelector((state) => state.simulating.state);
@@ -171,14 +171,20 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
 
     useEffect(() =>{
       if(ticker === "SPY"){
-      console.log("simulating : " + simulating);
-      console.log("looping : " + looping);
-      console.log("price : " + price);
+      //console.log("simulating : " + simulating);
+      //console.log("looping : " + looping);
+      //console.log("price : " + price);
       }
       if(simulating || (simulating && looping)){
       setTimeout(()=> stockMove({price : price, trend : trend}), tickSpeed);
       dispatch(update({ticker: ticker, price: price}));
       setMovingAverage(price);
+      }
+      else{
+        console.log("Loop ended ??? ");
+        console.log("simulating : " + simulating);
+        console.log("2nd condition : " + (simulating && looping));
+        console.log(simulating || (simulating && looping));
       }
     }, [price, simulating]);
 
