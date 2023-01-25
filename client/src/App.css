@@ -114,3 +114,7 @@ body{
     fill-opacity: 1;
     fill: url(#gradient-0);
 }
+
+.icon{
+    vertical-align: bottom !important;
+}

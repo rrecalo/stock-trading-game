@@ -130,8 +130,10 @@ function App() {
   }
 
   return (
-    <div className="App flex flex-row bg-deep-800 h-screen">
-        <Navbar className="User" />
+    <div className="App flex flex-row bg-deep-800 h-screen w-full">
+        <div className='w-[15%]'>
+        <Navbar />
+        </div>
         <div className='flex flex-col bg-deep-800 m-auto w-[85%] h-[90%] rounded-2xl'>
           <div className='flex flex-col m-auto w-[95%] h-[95%]'>
             <div className='flex flex-row justify-between w-[100%] text-white text-3xl font-extralight pb-2'>
