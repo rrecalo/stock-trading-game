@@ -6,6 +6,7 @@ import simulationReducer from './redux/simulationSlice'
 import portfolioReducer from './redux/portfolioSlice'
 import tradeSelectionReducer from './redux/tradeSelectionSlice'
 import dayCounterReducer from './redux/dayCounterSlice'
+import navigationReducer from './redux/navigationSlice'
 
 export default configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export default configureStore({
     tradeSelection: tradeSelectionReducer,
     simulating: simulationReducer,
     dayCounter : dayCounterReducer,
+    navigationController : navigationReducer,
 
   },
 })

@@ -1,5 +1,4 @@
 import { createSlice} from '@reduxjs/toolkit'
-import {useSelector} from 'react-redux'
 
 export const portfolioReducer = createSlice({
     name: 'portfolio',
