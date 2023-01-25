@@ -8,8 +8,7 @@ import NavOption from './NavOption';
 
 const Navbar = ({user, ...props}) => {
 
-    const portfolio = useSelector((state) => state.portfolio);
-    const days = useSelector((state) => state.dayCounter);
+
 
   return (
     <div className='flex flex-col bg-deep-700 h-full items-center justify-between'>
