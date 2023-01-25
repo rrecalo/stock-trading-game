@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch} from 'react-redux'
-import { update } from './redux/pricesSlice'
-import { incrementDays } from './redux/dayCounterSlice'
-import { updateTradeSelection } from './redux/tradeSelectionSlice'
-import StockSummaryChart from './Components/StockSummaryChart'
+import { update } from '../../redux/pricesSlice'
+import { incrementDays } from '../../redux/dayCounterSlice'
+import { updateTradeSelection } from '../../redux/tradeSelectionSlice'
+import StockSummaryChart from './StockSummaryChart'
 
-const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
+const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => {
   
 
     //default is 250
@@ -234,7 +234,7 @@ const Stock = ({stockTicker, stockPrice, stockTrend, ...props}) => {
   )
 }
 
-export default Stock
+export default StockSummaryBubble
 
 //
 //<div onClick={handleClick} className={`p-1 rounded-lg ${selectedStock === ticker ? 'bg-transparent' : 'bg-transparent'}`}>
