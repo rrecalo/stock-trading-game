@@ -6,29 +6,22 @@ import SellButton from '../../SellButton';
 import { useSelector, useDispatch} from 'react-redux'
 import { buy, sell } from '../../../redux/positionsSlice'
 import { decrementCapital, incrementCapital} from '../../../redux/capitalSlice'
-import { StartSimulation, EndSimulation, toggleLoop } from '../../../redux/simulationSlice';
-import { updatePortfolio } from '../../../redux/portfolioSlice';
 
 
-const Dashboard = ({stocks,...props}) => {
+const Dashboard = ({stocks, startSim,...props}) => {
 
-    const positions = useSelector((state) => state.positions);
-    const prices = useSelector((state) => state.prices);
-    const capital = useSelector((state) => state.capital);
+
     const simulation = useSelector((state) => state.simulating.state);
     const looping = useSelector((state) => state.simulating.isLooping);
     const portfolio = useSelector((state) => state.portfolio);
-    const [viewYTD, setViewYTD] = useState(false);
+    const positions = useSelector((state) => state.positions);
+    const prices = useSelector((state) => state.prices);
+    const capital = useSelector((state) => state.capital);
 
+    const [viewYTD, setViewYTD] = useState(false);
 
     const dispatch = useDispatch();
 
-
-
-
-    useEffect(()=>{
-        calculatePortfolio(prices, positions, capital);
-    }, [prices, positions, capital])
 
     useEffect(()=>{
         //console.log("loop status : " + looping);
@@ -45,19 +38,6 @@ const Dashboard = ({stocks,...props}) => {
         setViewYTD(prev => !prev);
       }
     
-    function calculatePortfolio(prices, positions, capital){
-    let total = capital
-    
-    positions.forEach(element => {
-        total+=element.amount * prices.find(e => e.ticker === element.ticker).price;
-    });
-
-    //ONLY update portfolio value if the value is Different!!
-    if(total !== portfolio){
-    dispatch(updatePortfolio({value : total}));
-    }
-    }
-
     function renderStockBubbles(){
     if(stocks !== [])
     return stocks.map(stock => {return (<StockSummaryBubble key={stock.ticker} 
@@ -85,19 +65,7 @@ const Dashboard = ({stocks,...props}) => {
     //}
     }
 
-    function startSim(){
-        if(simulation == false){
-        console.log("Simulation started");
-        dispatch(StartSimulation());
-        }
-        else {console.log("already running!!!")};
-      }
-    function endSim(){
-        dispatch(EndSimulation());
-    }
-    function loopSim(){
-        dispatch(toggleLoop());
-    }
+
 
   return (
     

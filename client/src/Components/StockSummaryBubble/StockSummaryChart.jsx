@@ -6,11 +6,11 @@ import StockSummaryChartStyles from './StockSummaryChartStyles.css';
 
 const StockSummaryChart = ({data, ...props}) => {
 
-    const [priceData, setPriceData] = useState(data.map(e => e.close));
+    const [priceData, setPriceData] = useState(data.map(e => e));
 
     useEffect(() => {
-        if(data.slice(-1).close !== priceData){
-        setPriceData(data.map(e => e.close));
+        if(data.slice(-1) !== priceData){
+        setPriceData(data.map(e => e));
         }
     },[data]);
 

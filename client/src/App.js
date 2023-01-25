@@ -7,11 +7,23 @@ import {Routes, Route} from 'react-router-dom'
 import Analytics from './Components/Pages/Analytics/Analytics';
 import Positions from './Components/Pages/Positions/Positions';
 import Trade from './Components/Pages/Trade/Trade';
+import {useSelector, useDispatch} from 'react-redux';
+import { StartSimulation, EndSimulation, toggleLoop } from './redux/simulationSlice';
+import { updatePortfolio } from './redux/portfolioSlice';
+import StockSimulation from './Components/StockSimulation';
+
 
 function App() {
 
 
+  const simulation = useSelector((state) => state.simulating.state);
+  const positions = useSelector((state) => state.positions);
+  const prices = useSelector((state) => state.prices);
+  const capital = useSelector((state) => state.capital);
+  const portfolio = useSelector((state) => state.portfolio);
   //const tradeSelection = useSelector((state) => state.tradeSelection);
+  
+  const dispatch = useDispatch();
 
   const [userName, setUserName] = useState();
   const [stocks, setStocks] = useState([]);
@@ -39,7 +51,39 @@ function App() {
     getStocks(URL).then((result)=>{setStocks(result.data)});
   }, [])
 
+  useEffect(()=>{
+    calculatePortfolio(prices, positions, capital);
+    
+}, [prices, positions, capital])
 
+
+
+function calculatePortfolio(prices, positions, capital){
+  let total = capital
+  
+  
+  positions.forEach(element => {
+      total+=element.amount * prices.find(e => e.ticker === element.ticker).price;
+  });
+      //ONLY update portfolio value if the value is Different!!
+    if(total !== portfolio){
+    dispatch(updatePortfolio({value : total}));
+    }
+  }
+
+  function startSim(){
+    if(simulation == false){
+    console.log("Simulation started");
+    dispatch(StartSimulation());
+    }
+    else {console.log("already running!!!")};
+  }
+  function endSim(){
+      dispatch(EndSimulation());
+  }
+  function loopSim(){
+      dispatch(toggleLoop());
+  }
 
  
 
@@ -51,20 +95,16 @@ function App() {
     }
   },[userName])
 
-  
-
-  
-
-  
 
   return (
     <div className="App flex flex-row bg-deep-800 h-screen w-full">
+        <StockSimulation stocks={stocks}/>
         <div className='w-[15%]'>
         <Navbar />
         </div>
         <div className='flex flex-col bg-deep-800 m-auto w-[85%] h-[90%] rounded-2xl'>
           <Routes>
-            <Route path="/*" element={<Dashboard stocks={stocks}/>} />
+            <Route path="/*" element={<Dashboard stocks={stocks} startSim={startSim}/>} />
             <Route path="/trade" element={<Trade />}/>
             <Route path="/positions" element={<Positions />}/>
             <Route path="/analytics" element={<Analytics />}/>
@@ -74,10 +114,11 @@ function App() {
   );
 }
 
+export default App;
+
 //<button onClick={loopSim} className='text-lg text-white p-2 px-4 bg-zinc-900 rounded-md'>Toggle Loop</button>
 
 
-export default App;
 
 
 /**
