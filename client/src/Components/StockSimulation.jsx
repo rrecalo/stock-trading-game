@@ -7,19 +7,20 @@ import { updateHistory } from '../redux/stockHistory';
 const StockSimulation = ({stocks, ...props}) => {
 
   //default is 100
-  var tickSpeed = 100;
-
+  var tickSpeed = 150;
+  var cycleLength = 50;
 
   const simulation = useSelector((state) => state.simulating.state);
   const prices = useSelector((state) => state.prices);
   const [stockData, setStockData] = useState([]);
   const dispatch = useDispatch();
+  const [cycles, setCycles] = useState(0);
 
   useEffect(()=>{
     if(stocks.length > 0){
       setStockData(stocks.map(stock => ({ticker: stock.ticker, price: stock.price, trend: 0})))
       stocks.forEach((stock) => {
-      dispatch(update({ticker: stock.ticker, price: stock.price, history: []}));
+      dispatch(update({ticker: stock.ticker, price: stock.price, last: stock.price, history: []}));
       });
     }
   },[stocks])
@@ -39,11 +40,14 @@ const StockSimulation = ({stocks, ...props}) => {
   useEffect(()=>{
     
     if(simulation){
-    setTimeout(()=>runSimulation(stockData), tickSpeed);
+      setCycles(prev=>prev+1);
+      if(cycles % cycleLength === 0){
+        setTimeout(()=> updateStocksLastPrice(prices), tickSpeed);
+      }
+      setTimeout(()=>runSimulation(stockData), tickSpeed);
     }
     if(stockData !== []){
       updateStocks(stockData);
-      //updateStocksHistory(stockData);
     }
   }, [stockData])
 
@@ -82,14 +86,18 @@ const StockSimulation = ({stocks, ...props}) => {
 
   function updateStocks(stocks){
     stocks.forEach(stock =>{
-      //if()
-      dispatch(update({ticker: stock.ticker, price: stock.price, history: [...prices.find(e => e.ticker === stock.ticker).history, prices.find(e => e.ticker === stock.ticker).price]}));
+      dispatch(update({ticker: stock.ticker, price: stock.price, last: prices.find(e => e.ticker === stock.ticker).last, history: [...prices.find(e => e.ticker === stock.ticker).history, prices.find(e => e.ticker === stock.ticker).price]}));
     })
   }
 
   function updateStocksHistory(stocks){
     stocks.forEach(stock =>{
       dispatch(updateHistory({ticker:stock.ticker, history: stock.history}));
+    });
+  }
+  function updateStocksLastPrice(stocks){
+    stocks.forEach(stock =>{
+    dispatch(update({ticker: stock.ticker, price: stock.price, last: prices.find(e => e.ticker === stock.ticker).history.slice(-1)[0], history: [...prices.find(e => e.ticker === stock.ticker).history, prices.find(e => e.ticker === stock.ticker).price]}));
     });
   }
 

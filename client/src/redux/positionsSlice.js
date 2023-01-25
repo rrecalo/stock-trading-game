@@ -14,7 +14,7 @@ export const positionsSlice = createSlice({
             if(obj !==undefined){
                 amt = obj.amount;
             }
-            return state.filter(obj => obj.ticker !== action.payload.ticker).concat([{ticker: action.payload.ticker, amount: amt+action.payload.amount}]);;
+            return state.filter(obj => obj.ticker !== action.payload.ticker).concat([{ticker: action.payload.ticker, amount: amt+action.payload.amount, cost: action.payload.cost}]);;
         },
         sell: (state, action)=>{
             
@@ -23,7 +23,7 @@ export const positionsSlice = createSlice({
             if(obj !== undefined){
                 amt = obj.amount;
             }
-            return state.filter(obj => obj.ticker !== action.payload.ticker).concat([{ticker: action.payload.ticker, amount: amt-action.payload.amount}]);;
+            return state.filter(obj => obj.ticker !== action.payload.ticker).concat([{ticker: action.payload.ticker, amount: amt-action.payload.amount, cost: action.payload.cost}]);;
         }
     }
 })

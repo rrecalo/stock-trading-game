@@ -53,20 +53,13 @@ const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => 
     }, [simulation, looping])
 
     useEffect(()=>{
-      // if(ticker=== "SPY"){
-      //   console.log("simulating : " + simulating);
-      //   console.log("history length:  " + history.length); 
-      //   console.log("loop variable : " + looping); }
-      if(history.length > 2 && (history.length % dayLengthInTicks === 0) && looping === false){
-        //setSimulating(false);
-        if(ticker === "SPY") 
-        {
-        dispatch(incrementDays(1));
-        }
-        
+      if(prices.length > 0){
+      let stock = prices.find(stock => stock.ticker === ticker);
+      if(stock.last !== lastMark){
+        setLastMark(stock.last);
       }
-      //if(ticker === "SPY" && history.length % 15 == 0 && history.length > 2){}
-    }, [])
+    }
+    }, [prices])
     
     useEffect(()=>{
       // if(history.length > 50){
@@ -132,20 +125,15 @@ const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => 
         }
     }, [selectedStock, selected]);
 
-    function renderTrend(){
-      if(trend < 0)
-      return <span className='text-red-100 text-xs'>{trend}</span>
-      else
-      return <span className='text-green-100 text-xs'>{trend}</span>
-    }
+    //deprecated???? i guess - the trend is mostly for backend code, not for user to see/use anyway
+    // function renderTrend(){
+    //   if(trend < 0)
+    //   return <span className='text-red-100 text-xs'>{trend}</span>
+    //   else
+    //   return <span className='text-green-100 text-xs'>{trend}</span>
+    // }
     
-    function changeSinceOpen(){
-      return movingAverage - openPrice;
-    }
 
-    function percentChangeSinceOpen(){
-      return (changeSinceOpen() / openPrice * 100);
-    }
 
     function handleClick(){
       setSelected(selected => !selected);

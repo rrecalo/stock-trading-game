@@ -49,7 +49,7 @@ const Dashboard = ({stocks, startSim,...props}) => {
     function buyStock(ticker){
         let stockPrice = prices.find(obj => obj.ticker === ticker).price;
         if(capital < stockPrice) return;
-        dispatch(buy({ticker : ticker, amount: 10}));
+        dispatch(buy({ticker : ticker, amount: 10, cost: stockPrice}));
         dispatch(decrementCapital({amount: stockPrice * 10}));
         //setCash(oldCash => oldCash - (stockPrice * 10));
     //}
@@ -59,7 +59,7 @@ const Dashboard = ({stocks, startSim,...props}) => {
         let stockPrice = prices.find(obj => obj.ticker === ticker).price;
         if(positions.length === 0) return;
         if(positions.find(obj => obj.ticker === ticker).amount <= 0) return;
-        dispatch(sell({ticker : ticker, amount: 10}));
+        dispatch(sell({ticker : ticker, amount: 10, cost: stockPrice}));
         dispatch(incrementCapital({amount: stockPrice * 10}));
         //setCash(oldCash => oldCash + (prices.find(obj => obj.ticker === "SPY").price * 10));
     //}

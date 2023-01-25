@@ -8,10 +8,13 @@ export default function stockMove(stock){
     //15
     //25 or 50
     //2
-    var TREND_STRENGTH_COEFFICIENT = 20; //higher = stronger/longer trends
+
+    //raised from 20
+    var TREND_STRENGTH_COEFFICIENT = 30; //higher = stronger/longer trends
     //250
     var PERCENT_CHANGE_COEFFICIENT = 100; // higher == smaller moves 50 works well
-    var TREND_PRICE_EFFECT_COEFFCIENT = 2; //higher == stronger price moves relative to trend value
+    //dropped from two
+    var TREND_PRICE_EFFECT_COEFFCIENT = 1.75; //higher == stronger price moves relative to trend value
     
     
 
