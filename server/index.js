@@ -21,8 +21,13 @@ app.use(cors());
 let api_token = process.env.API_TOKEN;
 let token = process.env.MONGODB_TOKEN;
 
-mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/StockTradingGame?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://robertrecalo:"+token+"@freecluster.ywz3xk7.mongodb.net/StockTradingGame?retryWrites=true&w=majority", {minPoolSize: 1 }).
+catch(error => handleError(error));
 //mongodb+srv://robertrecalo:<password>@freecluster.ywz3xk7.mongodb.net/?retryWrites=true&w=majority
+
+mongoose.connection.on('error', err => {
+  logError(err);
+});
 
 //req = request
 //res = response
