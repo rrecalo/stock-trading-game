@@ -7,6 +7,7 @@ import { useSelector, useDispatch} from 'react-redux'
 import { buy, sell } from '../../../redux/positionsSlice'
 import { decrementCapital, incrementCapital} from '../../../redux/capitalSlice'
 import { setView } from '../../../redux/portfolioSlice';
+import ThreeDotLoadingAnim from '../../ThreeDotLoadingAnim';
 
 
 const Dashboard = ({stocks, startSim,...props}) => {
@@ -117,7 +118,7 @@ const Dashboard = ({stocks, startSim,...props}) => {
       </div>
     </div>
     <div className='flex flex-row flex-wrap gap-6'>
-      {renderStockBubbles()}
+      {stocks.length !== 0 ? renderStockBubbles() : <ThreeDotLoadingAnim />}
       <button 
         disabled={simulation}
         onClick={startSim} 
