@@ -84,7 +84,7 @@ const Dashboard = ({stocks, startSim,...props}) => {
       </div>
       <div className='text-green-500 text-3xl font-extralight'>${portfolio.value.toFixed(2)}</div>
     </div>
-    <div className='h-[300px] w-[100%]'>
+    <div className='h-[300px] w-[100%] mb-[25px]'>
       <svg style={{height:0}}>
       <defs>
             <filter id="f1" x="0" y="0">
@@ -108,7 +108,7 @@ const Dashboard = ({stocks, startSim,...props}) => {
             </linearGradient>
         </defs>
       </svg>
-      <PortfolioChart viewYTD={portfolio.view}/>
+      <PortfolioChart height={300}/>
     </div>
     <div className='flex flex-row justify-between items-center gap-8'>
       <div className='text-3xl text-white font-extralight py-6'>Stocks</div>

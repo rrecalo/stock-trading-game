@@ -2,10 +2,10 @@ import { createSlice} from '@reduxjs/toolkit'
 
 export const tradeSelection = createSlice({
     name: 'tradeSelection',
-    initialState: "SPY",
+    initialState: "",
     reducers: {
         updateTradeSelection: (state, action)=>{
-            return action.payload.ticker;
+            return action.payload;
         }
     }
 })

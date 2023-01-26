@@ -11,7 +11,6 @@ const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => 
     //default is 250
 
     //default is 15
-    var dayLengthInTicks = 30;
 
     var summaryChartLength = 250;
 
@@ -22,12 +21,9 @@ const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => 
     const looping = useSelector((state) => state.simulating.isLooping);
     //const days = useSelector((state) => state.dayCounter);
     const dispatch = useDispatch();
-    const [selected, setSelected] = useState(false);
     const selectedStock = useSelector((state) => state.tradeSelection);
 
     const [ticker, setTicker] = useState(stockTicker);
-    const [openPrice] = useState(stockPrice);
-    const [trend, setTrend] = useState(stockTrend);
     const [price, setPrice] = useState(stockPrice);
     const [movingAverage, setMovingAverage] = useState(stockPrice);
     const [lastMark, setLastMark] = useState(stockPrice);
@@ -111,19 +107,7 @@ const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => 
 
     }, [price])
 
-    useEffect(()=>{
-      if(selectedStock !== ticker){
-        dispatch(updateTradeSelection({ticker: ticker}));
-      }
-    }, [selected]);
 
-    useEffect(()=>{
-        if(selected){
-          if(ticker !== selectedStock){
-            setSelected(false);
-          }
-        }
-    }, [selectedStock, selected]);
 
     //deprecated???? i guess - the trend is mostly for backend code, not for user to see/use anyway
     // function renderTrend(){
@@ -135,12 +119,10 @@ const StockSummaryBubble = ({stockTicker, stockPrice, stockTrend, ...props}) => 
     
 
 
-    function handleClick(){
-      setSelected(selected => !selected);
-    }
+
 
   return (
-    <div onClick={handleClick} 
+    <div 
       className={`${selectedStock === ticker ? 'border' : ""} border-deep-200 flex flex-col w-[200px] h-[100px] p-3 rounded-2xl bg-deep-900 shadow-xl`}>
     
         <div className='text-xl flex flex-row justify-between'>

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector} from 'react-redux'
+import PortfolioChart from '../../PortfolioChart'
 
 const Positions = () => {
 
@@ -33,8 +34,9 @@ const Positions = () => {
           <div className='text-white text-3xl font-extralight'>Positions</div>
           <div className='text-green-500 text-3xl font-extralight'>${portfolio.value.toFixed(2)}</div>
         </div>
+        
         <div className='h-[500px] w-[100%]'>
-        <table className='text-white'>
+        <table className='text-white w-[100%]'>
             <tr className='text-deep-50'>
               <th className='w-24 p-2 border-deep-200 border-b'>Ticker</th>
               <th className='w-32 text-center border-deep-200 border-b bg-deep-700'>Last Ask</th>
@@ -56,3 +58,32 @@ const Positions = () => {
 }
 
 export default Positions
+
+/**
+ * <div className='h-[200px] w-[50%] mb-[25px]'>
+          <svg style={{height:0}}>
+      <defs>
+            <filter id="f1" x="0" y="0">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="15" />
+            </filter>
+            <linearGradient id="gradient-0" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" />
+                <stop offset="1" />
+            </linearGradient>
+            <linearGradient id="gradient-1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" />
+                <stop offset="1" />
+            </linearGradient>
+            <linearGradient id="gradient-2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" />
+                <stop offset="1" />
+            </linearGradient>
+            <linearGradient id="gradient-3" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" />
+                <stop offset="1" />
+            </linearGradient>
+        </defs>
+          </svg>
+          <PortfolioChart height={200}/>
+        </div>
+ */

@@ -1,4 +1,4 @@
-#stock_summary_chart .highcharts-container{
+#focused_stock_chart .highcharts-container{
     font-family: 'Montserrat', sans-serif !important;
 }
 
@@ -9,26 +9,27 @@
     fill: #14532d;
     stroke: #18181b;
 }
-#stock_summary_chart .highcharts-graph{
+#focused_stock_chart .highcharts-graph{
     stroke:#157f3c;
-    /* filter: drop-shadow(0px -3px 5px #157f3c); */
+    filter: drop-shadow(0px -3px 5px #157f3c);
 }
 .highcharts-area{
     stroke:#157f3c;
 }
-.highcharts-axis-line{
-    stroke:transparent;
+#focused_stock_chart .highcharts-axis-line{
+    stroke:#14532d;
 }
 .highcharts-tick{
     stroke:#14532d;
 }
-.highcharts-grid-line{
-    stroke: transparent;
+#focused_stock_chart .highcharts-grid-line{
+    stroke: #14532d;
     opacity: 0.33;
-    /* filter: drop-shadow(0px -3px 5px #157f3c); */
+    filter: drop-shadow(0px -3px 5px #157f3c);
 }
-#stock_summary .highcharts-axis-labels .highcharts-yaxis-labels{
-    filter: none !important;
+#focused_stock_chart .highcharts-axis-labels{
+    fill: whitesmoke;
+    /* filter: drop-shadow(1px 1px 1px whitesmoke); */
 }
 .highcharts-loading {
     background-color: #14532d;    
@@ -36,7 +37,6 @@
 .highcharts-title{
     font-size:1.75rem;
     font-weight: 100;
-    fill : white;
     
 }
 
@@ -76,11 +76,11 @@
 }
 
 
-#stock_summary_chart .highcharts-plot-background {
+#focused_stock_chart .highcharts-plot-background {
     fill-opacity: 1;
 }
 
-#stock_summary_chart .highcharts-color-0 .highcharts-area {
+#focused_stock_chart .highcharts-color-0 .highcharts-area {
     fill-opacity: 1;
     fill: url(#gradient-2);
 }
