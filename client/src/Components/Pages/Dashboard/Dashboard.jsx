@@ -6,6 +6,7 @@ import SellButton from '../../SellButton';
 import { useSelector, useDispatch} from 'react-redux'
 import { buy, sell } from '../../../redux/positionsSlice'
 import { decrementCapital, incrementCapital} from '../../../redux/capitalSlice'
+import { setView } from '../../../redux/portfolioSlice';
 
 
 const Dashboard = ({stocks, startSim,...props}) => {
@@ -17,8 +18,6 @@ const Dashboard = ({stocks, startSim,...props}) => {
     const positions = useSelector((state) => state.positions);
     const prices = useSelector((state) => state.prices);
     const capital = useSelector((state) => state.capital);
-
-    const [viewYTD, setViewYTD] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -35,7 +34,12 @@ const Dashboard = ({stocks, startSim,...props}) => {
 
 
     function handleViewChange() {
-        setViewYTD(prev => !prev);
+        if(portfolio.view === 0){
+          dispatch(setView({view: 1}));
+        }
+        else {
+          dispatch(setView({view: 0}));
+        }
       }
     
     function renderStockBubbles(){
@@ -74,10 +78,10 @@ const Dashboard = ({stocks, startSim,...props}) => {
       <div className='flex flex-row gap-6'>
         <div className='text-white text-3xl font-extralight'>Portfolio</div>
         <button onClick={handleViewChange} className='text-lg bg-deep-900 p-2 rounded-2xl font-extralight w-32'>
-          {viewYTD ? "All-Time": "Short-Term"}
+          {portfolio.view === 1 ? "All-Time": "Short-Term"}
         </button>
       </div>
-      <div className='text-green-500 text-3xl font-extralight'>${portfolio.toFixed(2)}</div>
+      <div className='text-green-500 text-3xl font-extralight'>${portfolio.value.toFixed(2)}</div>
     </div>
     <div className='h-[300px] w-[100%]'>
       <svg style={{height:0}}>
@@ -103,7 +107,7 @@ const Dashboard = ({stocks, startSim,...props}) => {
             </linearGradient>
         </defs>
       </svg>
-      <PortfolioChart viewYTD={viewYTD}/>
+      <PortfolioChart viewYTD={portfolio.view}/>
     </div>
     <div className='flex flex-row justify-between items-center gap-8'>
       <div className='text-3xl text-white font-extralight py-6'>Stocks</div>

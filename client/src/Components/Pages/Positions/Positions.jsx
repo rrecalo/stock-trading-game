@@ -31,7 +31,7 @@ const Positions = () => {
     <div className='flex flex-col m-auto w-[95%] h-[95%]'>
         <div className='flex flex-row justify-between w-[100%] text-white text-3xl font-extralight pb-2'>
           <div className='text-white text-3xl font-extralight'>Positions</div>
-          <div className='text-green-500 text-3xl font-extralight'>${portfolio.toFixed(2)}</div>
+          <div className='text-green-500 text-3xl font-extralight'>${portfolio.value.toFixed(2)}</div>
         </div>
         <div className='h-[500px] w-[100%]'>
         <table className='text-white'>
@@ -46,7 +46,9 @@ const Positions = () => {
               <th className='w-32 border-deep-200 border-b bg-deep-700'>Last Close</th>
 
             </tr>
+            <tbody>
             {renderPositionsTable()}
+            </tbody>
           </table>
         </div>
     </div>

@@ -59,15 +59,15 @@ function App() {
 
 
 function calculatePortfolio(prices, positions, capital){
-  let total = capital
-  
+  let total = capital;
+  let oldPortfolioValue = portfolio.value;
   
   positions.forEach(element => {
       total+=element.amount * prices.find(e => e.ticker === element.ticker).price;
   });
-      //ONLY update portfolio value if the value is Different!!
+    //ONLY update portfolio value if the value is Different!!
     if(total !== portfolio){
-    dispatch(updatePortfolio({value : total}));
+    dispatch(updatePortfolio({value : total, history: [...portfolio.history, oldPortfolioValue]}));
     }
   }
 
