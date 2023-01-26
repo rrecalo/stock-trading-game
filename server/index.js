@@ -34,6 +34,7 @@ app.get("/getStocks", (req, res)=>{
       console.log("Error making /getStocks request!!!");
     }
     else{
+      console.log("/getStocks request received, result was returned!");
       res.json(result);
     }
   });
