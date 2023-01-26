@@ -4,7 +4,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 
-const PortfolioChart = ({viewYTD, ...props}) => {
+const PortfolioChart = ({...props}) => {
 
     const portfolio = useSelector((state) => state.portfolio);
     
@@ -28,7 +28,7 @@ const PortfolioChart = ({viewYTD, ...props}) => {
         //title:{text:"Portfolio", align:"left", x:0},
         series: [
           {
-            data: viewYTD ? portfolio.history : portfolio.history.slice(-250), 
+            data: portfolio.view === 1 ? portfolio.history : portfolio.history.slice(-250), 
             marker: {
                 enabled: false,
                 states:{
@@ -41,8 +41,8 @@ const PortfolioChart = ({viewYTD, ...props}) => {
         yAxis:{
             labels:{x:5, y:-5, align:"left",
           },
-            ceiling:viewYTD ? Math.max(...portfolio.history) * 1.01 : Math.max(...portfolio.history.slice(-250)) * 1.01,
-            floor:viewYTD ? Math.min(...portfolio.history) * 0.99 : Math.min(...portfolio.history.slice(-250)) * 0.99,
+            ceiling:portfolio.view === 1 ? Math.max(...portfolio.history) * 1.01 : Math.max(...portfolio.history.slice(-250)) * 1.01,
+            floor:portfolio.view === 1 ? Math.min(...portfolio.history) * 0.99 : Math.min(...portfolio.history.slice(-250)) * 0.99,
             //softMin: portfolio * 0.95,
             //softMax: portfolio * 1.05,
             title:{text:undefined},
