@@ -48,8 +48,14 @@ function App() {
 
   useEffect(()=>{
     userLogin(URL, "user1", "1372").then((result)=>{setUser(result.data)}, (result) => {console.log(result)});
-    getStocks(URL).then((result)=>{setStocks(result.data)});
+    //getStocks(URL).then((result)=>{setStocks(result.data)});
   }, [])
+
+  useEffect(()=>{
+    if(stocks.length === 0){
+      setTimeout(()=>{getStocks(URL).then((result)=>{setStocks(result.data)}); console.log("FETCH!");}, 500);
+    }
+  }, [stocks])
 
   useEffect(()=>{
     calculatePortfolio(prices, positions, capital);

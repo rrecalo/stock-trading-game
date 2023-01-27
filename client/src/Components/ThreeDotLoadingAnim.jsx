@@ -41,7 +41,7 @@ const DotVariants = {
 const DotTransition = {
   duration: 0.5,
   ease: "easeInOut",
-  repeat: 5,
+  repeat: Infinity,
   repeatType: "mirror",
 };
 
